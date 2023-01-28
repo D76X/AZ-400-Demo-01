@@ -27,7 +27,8 @@
         "description": "Describes plan's pricing tier and capacity. Check details at https://azure.microsoft.com/en-us/pricing/details/app-service/"
       }
     }},
-  "variables": {},
+  "variables": {
+    "wa-az-400-demo-1Name": "[concat('wa-az-400-demo-1', uniqueString(resourceGroup().id))]"},
   "resources": [
     {
       "name": "[parameters('asp-az-400-demo-1Name')]",
@@ -44,6 +45,23 @@
       "properties": {
         "name": "[parameters('asp-az-400-demo-1Name')]",
         "numberOfWorkers": 1
+      }
+    },
+    {
+      "name": "[variables('wa-az-400-demo-1Name')]",
+      "type": "Microsoft.Web/sites",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "2015-08-01",
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/serverfarms', parameters('asp-az-400-demo-1Name'))]"
+      ],
+      "tags": {
+        "[concat('hidden-related:', resourceId('Microsoft.Web/serverfarms', parameters('asp-az-400-demo-1Name')))]": "Resource",
+        "displayName": "wa-az-400-demo-1"
+      },
+      "properties": {
+        "name": "[variables('wa-az-400-demo-1Name')]",
+        "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('asp-az-400-demo-1Name'))]"
       }
     }
     
