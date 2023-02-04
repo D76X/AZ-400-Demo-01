@@ -1,4 +1,5 @@
 # Starter pipeline
+
 # Start with a minimal pipeline that you can customize to build and deploy your code.
 # Add steps that build, run tests, deploy, and more:
 # https://aka.ms/yaml
@@ -40,3 +41,18 @@ steps:
     arguments: '--configuration $(buildConfiguration) --no-build'
     projects: 'WebApp-01/WebApp-01.csproj'
   displayName: 'dotnet publish $(buildConfiguration)'
+
+- task: PublishPipelineArtifact@1
+  inputs:
+    targetPath: '$(Pipeline.Workspace)/ArmTemplates/bin/Release/azuredeploy*.json'
+    artifact: 'armtemplates'
+    publishLocation: 'pipeline'
+  displayName: 'publish artifacts arm templates'
+
+- task: PublishPipelineArtifact@1
+  inputs:
+    targetPath: '$(Pipeline.Workspace)/WebApp-01/bin/Release/net6.0/publish'
+    artifact: 'webapp01'
+    publishLocation: 'pipeline'
+  displayName: 'publish artifacts webapp-01'
+
