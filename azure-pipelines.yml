@@ -42,9 +42,15 @@ steps:
     projects: 'WebApp-01/WebApp-01.csproj'
   displayName: 'dotnet publish $(buildConfiguration)'
 
+- task: CopyFiles@2  
+  inputs:
+    sourceFolder: '$(Pipeline.Workspace)/ArmTemplates/bin/Release/'
+    contents: 'azuredeploy*.json'
+    targetFolder: '$(Pipeline.Workspace)/temparmtemplates/'
+
 - task: PublishPipelineArtifact@1
   inputs:
-    targetPath: '$(Pipeline.Workspace)/ArmTemplates/azuredeploy*.json'
+    targetPath: '$(Pipeline.Workspace)/temparmtemplates/'
     artifact: 'armtemplates'
     publishLocation: 'pipeline'
   displayName: 'publish artifacts arm templates'
