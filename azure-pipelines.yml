@@ -44,7 +44,7 @@ steps:
 
 - task: PublishPipelineArtifact@1
   inputs:
-    targetPath: '$(Pipeline.Workspace)/ArmTemplates/bin/Release/azuredeploy*.json'
+    targetPath: '$(Pipeline.Workspace)/ArmTemplates/azuredeploy*.json'
     artifact: 'armtemplates'
     publishLocation: 'pipeline'
   displayName: 'publish artifacts arm templates'
