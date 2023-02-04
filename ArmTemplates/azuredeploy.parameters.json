@@ -2,5 +2,11 @@
   "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
+      "asp-az-400-demo-1Name": {
+          "value": "#arm_appBaseName#"
+      },
+      "asp-az-400-demo-1SkuName": {
+          "value": "#arm_appBaseSkuName#"
+      }
   }
 }
