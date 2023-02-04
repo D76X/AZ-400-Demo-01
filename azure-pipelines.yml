@@ -33,3 +33,10 @@ steps:
     arguments: '--configuration $(buildConfiguration)'
     projects: '**/*.sln'
   displayName: 'dotnet build $(buildConfiguration)'
+
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'publish'
+    arguments: '--configuration $(buildConfiguration) --no-build'
+    projects: 'WebApp-01/WebApp-01.csproj'
+  displayName: 'dotnet publish $(buildConfiguration)'
