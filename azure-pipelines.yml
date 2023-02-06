@@ -63,10 +63,13 @@ steps:
     projects: 'WebApp-01/WebApp-01.csproj'
   
 
+# you need to copy the files azuredeploy*.json first because 
+# PublishPipelineArtifact@1 cannot use wildcards while 
+# CopyFiles@2 can
 - task: CopyFiles@2  
   displayName: 'copy files azuredeploy*.json'
   inputs:
-    sourceFolder: '$(Build.Repository.LocalPath)/ArmTemplates/'
+    sourceFolder: '$(Build.Repository.LocalPath)/ArmTemplates/bin/Release/'
     contents: 'azuredeploy*.json'
     targetFolder: '$(Pipeline.Workspace)/temparmtemplates/'
 
@@ -81,7 +84,7 @@ steps:
 - task: PublishPipelineArtifact@1
   displayName: 'publish artifacts webapp-01'
   inputs:
-    targetPath: '$(Pipeline.Workspace)/WebApp-01/bin/Release/net6.0/publish'
+    targetPath: '$(Build.Repository.LocalPath)/WebApp-01/bin/Release/net6.0/publish'
     artifact: 'webapp01'
     publishLocation: 'pipeline'
   
