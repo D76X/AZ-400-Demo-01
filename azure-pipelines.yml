@@ -22,43 +22,67 @@ steps:
     echo See https://aka.ms/yaml
   displayName: 'Run a multi-line script'
 
+- task: Bash@3
+  displayName: Print Relevant Variables Values
+  inputs:
+     targetType: 'inline'
+     script: |
+       echo "System.Debug=$(System.Debug)"
+       echo "Build.Repository.LocalPath=$(Build.Repository.LocalPath)"
+  #displayName: Print Variables of imported Variable Groups
+  #name: PrintVariableGroupsVariables
+  #inputs:
+  #    targetType: 'inline'
+  #    script: |
+  #      echo "System.Debug=$(System.Debug)"
+  #      echo "KeyStoreAlias=$(KeyStoreAlias)"
+  #      echo "SonarCloudOrganization=$(SonarCloudOrganization)"
+  #      echo "SonarCloudProjectKey=$(SonarCloudProjectKey)"
+  #      echo "SonarCloudProjectName=$(SonarCloudProjectName)"
+
 - task: NuGetCommand@2
+  displayName: 'restore NuGet packages'
   inputs:
     command: 'restore'
     restoreSolution: '**/*.sln'
     feedsToUse: 'select'
 
 - task: DotNetCoreCLI@2
+  displayName: 'dotnet build $(buildConfiguration)'
   inputs:
     command: 'build'
     arguments: '--configuration $(buildConfiguration)'
     projects: '**/*.sln'
-  displayName: 'dotnet build $(buildConfiguration)'
+  
 
 - task: DotNetCoreCLI@2
+  displayName: 'dotnet publish $(buildConfiguration)'
   inputs:
     command: 'publish'
     arguments: '--configuration $(buildConfiguration) --no-build'
     projects: 'WebApp-01/WebApp-01.csproj'
-  displayName: 'dotnet publish $(buildConfiguration)'
+  
 
 - task: CopyFiles@2  
+  displayName: 'copy files azuredeploy*.json'
   inputs:
-    sourceFolder: '$(Pipeline.Workspace)/ArmTemplates/'
+    sourceFolder: '$(Build.Repository.LocalPath)/ArmTemplates/'
     contents: 'azuredeploy*.json'
     targetFolder: '$(Pipeline.Workspace)/temparmtemplates/'
 
 - task: PublishPipelineArtifact@1
+  displayName: 'publish artifacts arm templates'
   inputs:
     targetPath: '$(Pipeline.Workspace)/temparmtemplates/'
     artifact: 'armtemplates'
     publishLocation: 'pipeline'
-  displayName: 'publish artifacts arm templates'
+  
 
 - task: PublishPipelineArtifact@1
+  displayName: 'publish artifacts webapp-01'
   inputs:
     targetPath: '$(Pipeline.Workspace)/WebApp-01/bin/Release/net6.0/publish'
     artifact: 'webapp01'
     publishLocation: 'pipeline'
-  displayName: 'publish artifacts webapp-01'
+  
 
