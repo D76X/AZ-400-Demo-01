@@ -80,7 +80,10 @@ steps:
     artifact: 'armtemplates'
     publishLocation: 'pipeline'
   
-
+#mind that PublishPipelineArtifact@1 uses DotNetCoreCLI@2 behind the scenes
+#and this taks has a zipAfterPublish [true] param that causes the publish 
+#folder to be zipped by default. This is different from what habbens in VS
+#REF: https://intellitect.com/blog/missing-publish-directory/
 - task: PublishPipelineArtifact@1
   displayName: 'publish artifacts webapp-01'
   inputs:
