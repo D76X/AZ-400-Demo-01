@@ -84,7 +84,7 @@ steps:
 - task: PublishPipelineArtifact@1
   displayName: 'publish artifacts webapp-01'
   inputs:
-    targetPath: '$(Build.Repository.LocalPath)/WebApp-01/bin/Release/net6.0/publish'
+    targetPath: '$(Build.Repository.LocalPath)/WebApp-01/bin/Release/net6.0/publish/'
     artifact: 'webapp01'
     publishLocation: 'pipeline'
   
