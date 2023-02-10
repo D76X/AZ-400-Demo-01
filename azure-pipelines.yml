@@ -59,8 +59,9 @@ steps:
   displayName: 'dotnet publish $(buildConfiguration)'
   inputs:
     command: 'publish'
-    arguments: '--configuration $(buildConfiguration) --no-build'
+    arguments: '--configuration $(buildConfiguration) --no-build --output $(Build.ArtifactStagingDirectory)'
     projects: 'WebApp-01/WebApp-01.csproj'
+    #arguments: '--configuration $(buildConfiguration) --no-build'
     # zipAfterPublish: true => this is the default and it is important to the PublishPipelineArtifact@1 that follows
 
 # you need to copy the files azuredeploy*.json first because 
@@ -88,7 +89,8 @@ steps:
 - task: PublishPipelineArtifact@1
   displayName: 'publish artifacts webapp-01'
   inputs:
-    targetPath: '$(Pipeline.Workspace)/s/WebApp-01/bin/Release/net6.0/publish.zip'
+    targetPath: '$(Build.ArtifactStagingDirectory)/publish.zip'
+    #targetPath: '$(Pipeline.Workspace)/s/WebApp-01/bin/Release/net6.0/publish.zip'
     artifact: 'webapp01'
     publishLocation: 'pipeline'
   
