@@ -28,7 +28,8 @@
       }
     }},
   "variables": {
-    "wa-az-400-demo-1Name": "[concat('wa-az-400-demo-1', uniqueString(resourceGroup().id))]"},
+    //"wa-az-400-demo-1Name": "[concat('wa-az-400-demo-1', uniqueString(resourceGroup().id))]"},
+    "wa-az-400-demo-1Name": "[concat('wa-az-400-demo-1','20230210')]"},
   "resources": [
     {
       "name": "[parameters('asp-az-400-demo-1Name')]",
