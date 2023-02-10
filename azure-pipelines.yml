@@ -22,37 +22,90 @@ steps:
     echo See https://aka.ms/yaml
   displayName: 'Run a multi-line script'
 
+- task: Bash@3
+  displayName: Print Relevant Variables Values
+  inputs:
+     targetType: 'inline'
+     script: |
+       echo "System.Debug=$(System.Debug)"
+       echo "Build.Repository.LocalPath=$(Build.Repository.LocalPath)"
+  #displayName: Print Variables of imported Variable Groups
+  #name: PrintVariableGroupsVariables
+  #inputs:
+  #    targetType: 'inline'
+  #    script: |
+  #      echo "System.Debug=$(System.Debug)"
+  #      echo "KeyStoreAlias=$(KeyStoreAlias)"
+  #      echo "SonarCloudOrganization=$(SonarCloudOrganization)"
+  #      echo "SonarCloudProjectKey=$(SonarCloudProjectKey)"
+  #      echo "SonarCloudProjectName=$(SonarCloudProjectName)"
+
 - task: NuGetCommand@2
+  displayName: 'restore NuGet packages'
   inputs:
     command: 'restore'
     restoreSolution: '**/*.sln'
     feedsToUse: 'select'
 
 - task: DotNetCoreCLI@2
+  displayName: 'dotnet build $(buildConfiguration)'
   inputs:
     command: 'build'
     arguments: '--configuration $(buildConfiguration)'
     projects: '**/*.sln'
-  displayName: 'dotnet build $(buildConfiguration)'
+  
 
 - task: DotNetCoreCLI@2
+  displayName: 'dotnet publish $(buildConfiguration)'
   inputs:
     command: 'publish'
-    arguments: '--configuration $(buildConfiguration) --no-build'
+    arguments: '--configuration $(buildConfiguration) --no-build --output $(Build.ArtifactStagingDirectory)'
     projects: 'WebApp-01/WebApp-01.csproj'
-  displayName: 'dotnet publish $(buildConfiguration)'
+    #arguments: '--configuration $(buildConfiguration) --no-build'
+    #zipAfterPublish: true => this is the default and it is important to the PublishPipelineArtifact@1 that follows
+    #modifyOutputPath: true # boolean. Optional. Use when command = publish. Add project's folder name to publish path. Default: true.
+    
+    
+# you need to copy the files azuredeploy*.json first because 
+# PublishPipelineArtifact@1 cannot use wildcards while 
+# CopyFiles@2 can
+- task: CopyFiles@2  
+  displayName: 'copy files azuredeploy*.json'
+  inputs:
+    sourceFolder: '$(Build.Repository.LocalPath)/ArmTemplates/bin/Release/'
+    contents: 'azuredeploy*.json'
+    targetFolder: '$(Pipeline.Workspace)/temparmtemplates/'
 
 - task: PublishPipelineArtifact@1
+  displayName: 'publish artifacts arm templates'
   inputs:
-    targetPath: '$(Pipeline.Workspace)/ArmTemplates/bin/Release/azuredeploy*.json'
+    targetPath: '$(Pipeline.Workspace)/temparmtemplates/'
     artifact: 'armtemplates'
     publishLocation: 'pipeline'
-  displayName: 'publish artifacts arm templates'
 
+# WHEN 
+# --output $(Build.ArtifactStagingDirectory) 
+# is NOT used as argument to the publish task
+# 
+# mind that PublishPipelineArtifact@1 telies on the output of a previous 
+# DotNetCoreCLI@2 step used to invoke the publish command for the *.csproj
+# and this taks has a zipAfterPublish [true] param that causes the publish 
+# folder to be zipped by default. This is different from what habbens in VS
+# REF: https://intellitect.com/blog/missing-publish-directory/
+#
+# WHEN 
+# --output $(Build.ArtifactStagingDirectory) 
+# is used as argument to the publish task
+# AND
+# modifyOutputPath: true
+#
+# the published task outputs a zipped folder named $(Build.ArtifactStagingDirectory)/projectName.zip 
 - task: PublishPipelineArtifact@1
-  inputs:
-    targetPath: '$(Pipeline.Workspace)/WebApp-01/bin/Release/net6.0/publish'
+  displayName: 'publish artifacts webapp-01'
+  inputs:    
+    targetPath: '$(Build.ArtifactStagingDirectory)/WebApp-01.zip'
+    #targetPath: '$(Pipeline.Workspace)/s/WebApp-01/bin/Release/net6.0/publish.zip'
     artifact: 'webapp01'
     publishLocation: 'pipeline'
-  displayName: 'publish artifacts webapp-01'
+  
 
