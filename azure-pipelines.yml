@@ -91,7 +91,7 @@ steps:
 - task: PublishPipelineArtifact@1
   displayName: 'publish artifacts webapp-01'
   inputs:
-    targetPath: '$(Build.ArtifactStagingDirectory)/WebApp-01/publish.zip'
+    targetPath: '$(Build.ArtifactStagingDirectory)/WebApp-01.zip'
     #targetPath: '$(Pipeline.Workspace)/s/WebApp-01/bin/Release/net6.0/publish.zip'
     artifact: 'webapp01'
     publishLocation: 'pipeline'
