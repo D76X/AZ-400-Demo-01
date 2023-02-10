@@ -62,8 +62,10 @@ steps:
     arguments: '--configuration $(buildConfiguration) --no-build --output $(Build.ArtifactStagingDirectory)'
     projects: 'WebApp-01/WebApp-01.csproj'
     #arguments: '--configuration $(buildConfiguration) --no-build'
-    # zipAfterPublish: true => this is the default and it is important to the PublishPipelineArtifact@1 that follows
-
+    #zipAfterPublish: true => this is the default and it is important to the PublishPipelineArtifact@1 that follows
+    #modifyOutputPath: true # boolean. Optional. Use when command = publish. Add project's folder name to publish path. Default: true.
+    
+    
 # you need to copy the files azuredeploy*.json first because 
 # PublishPipelineArtifact@1 cannot use wildcards while 
 # CopyFiles@2 can
@@ -89,7 +91,7 @@ steps:
 - task: PublishPipelineArtifact@1
   displayName: 'publish artifacts webapp-01'
   inputs:
-    targetPath: '$(Build.ArtifactStagingDirectory)/publish.zip'
+    targetPath: '$(Build.ArtifactStagingDirectory)/WebApp-01/publish.zip'
     #targetPath: '$(Pipeline.Workspace)/s/WebApp-01/bin/Release/net6.0/publish.zip'
     artifact: 'webapp01'
     publishLocation: 'pipeline'
