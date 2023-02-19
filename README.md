@@ -43,6 +43,8 @@ automated testing of code and artifacts may be done on some other infrastructre 
 
 ---
 
+small change to test release pipeline trigger to Feature stage when a feature branch is used
+
 
 
 
