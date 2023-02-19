@@ -4,8 +4,12 @@
 # Add steps that build, run tests, deploy, and more:
 # https://aka.ms/yaml
 
+# Build Azure Repos Git or TFS Git repositories
+# https://learn.microsoft.com/en-us/azure/devops/pipelines/repos/azure-repos-git?view=azure-devops&tabs=yaml#ci-triggers
 trigger:
 - main
+- releases/*
+- feature*
 
 pool:
   vmImage: ubuntu-latest
