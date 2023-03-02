@@ -10,6 +10,7 @@ trigger:
 - main
 - releases/*
 - feature*
+- development
 
 pool:
   vmImage: ubuntu-latest
