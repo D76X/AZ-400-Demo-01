@@ -8,7 +8,7 @@
 # https://learn.microsoft.com/en-us/azure/devops/pipelines/repos/azure-repos-git?view=azure-devops&tabs=yaml#ci-triggers
 trigger:
 - main
-- release/*
+- release*
 - feature*
 - development
 
