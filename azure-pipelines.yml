@@ -58,7 +58,26 @@ steps:
     command: 'build'
     arguments: '--configuration $(buildConfiguration)'
     projects: '**/*.sln'
-  
+
+# --------------------------------------------------------- 
+# Run Unit Tests
+
+# Exercise - Perform code coverage testing
+# https://learn.microsoft.com/en-us/training/modules/run-quality-tests-build-pipeline/6-perform-code-coverage
+# Run Unit Tests in an Azure Pipeline
+# https://www.udemy.com/course/azure100/learn/lecture/33318476#overview
+
+- task: DotNetCoreCLI@2
+  displayName: 'Run unit tests - $(buildConfiguration)'
+  inputs:
+    command: 'test'
+    arguments: '--no-build --configuration $(buildConfiguration)'
+    #arguments: '--no-build --configuration $(buildConfiguration) /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura /p:CoverletOutput=$(Build.SourcesDirectory)/TestResults/Coverage/'
+    #publishTestResults: true
+    projects: '**/*.Tests.csproj'
+
+# ---------------------------------------------------------
+# Publish 
 
 - task: DotNetCoreCLI@2
   displayName: 'dotnet publish $(buildConfiguration)'
