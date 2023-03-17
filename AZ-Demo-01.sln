@@ -11,7 +11,15 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BusinessLogic", "BusinessLo
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BusinessLogic.Test", "BusinessLogic.Test\BusinessLogic.Test.csproj", "{54E77996-808C-4859-B90B-5F5CFA4914C9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BusinessLogic.IntegrationTest", "BusinessLogic.IntegrationTest\BusinessLogic.IntegrationTest.csproj", "{D71D3F3F-6ECB-4CB1-907B-1893EEA1AA1C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BusinessLogic.IntegrationTest", "BusinessLogic.IntegrationTest\BusinessLogic.IntegrationTest.csproj", "{D71D3F3F-6ECB-4CB1-907B-1893EEA1AA1C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{AFF271D3-DAE7-40CF-809C-8523A3E417FF}"
+	ProjectSection(SolutionItems) = preProject
+		.gitignore = .gitignore
+		azure-pipelines.yml = azure-pipelines.yml
+		LICENSE = LICENSE
+		README.md = README.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
