@@ -12,12 +12,47 @@ trigger:
 - feature*
 - development
 
+# --------------------------------------------------------------------------------------
+# https://learn.microsoft.com/en-us/azure/devops/pipelines/process/service-containers?view=azure-devops&tabs=yaml
+# --------------------------------------------------------------------------------------
+# https://app.pluralsight.com/course-player?clipId=102ad897-c4ce-436a-8679-e5ba255aa081 
+# --------------------------------------------------------------------------------------
+# https://app.pluralsight.com/course-player?clipId=31e0c3a1-6211-48d8-9552-5be87fb56e43
+# --------------------------------------------------------------------------------------
+# Microsoft SQL Server - Ubuntu based images
+# https://hub.docker.com/_/microsoft-mssql-server
+# --------------------------------------------------------------------------------------
+resources:
+  containers:
+  - container: sqlserver
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    ports:
+    - 1433:1433
+    env:
+      MSSQL_SA_PASSWORD: "P@ssword1$"
+      ACCEPT_EULA: Y
+  
+
 pool:
   vmImage: ubuntu-latest
 
+# https://learn.microsoft.com/en-us/azure/devops/pipelines/process/service-containers?view=azure-devops&tabs=yaml
+services:
+  sqlserver: sqlserver
+  #redis: redis
+
 variables:
   buildConfiguration: 'Release'
-  
+  # --------------------------------------------
+  # These variables are going to override the values provided by the file
+  # appsettings.test.json of the project BusinessLogic.IntegrationTest
+  Database__IntegratedSecurity: "false"
+  Database__Server: "sqlserver"
+  Database__Port: "1433"
+  Database__UserId: "SA"
+  Database__Password: "P@ssword1$"
+  # --------------------------------------------
+
 steps:
 - script: echo Hello, world!
   displayName: 'Run a one-line script'
@@ -90,8 +125,9 @@ steps:
     arguments: '--no-build --configuration $(buildConfiguration) /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura /p:CoverletOutput=$(Build.SourcesDirectory)/TestResults/Coverage/'
     publishTestResults: true
     # ------------------------------------------------------------------------
-    # the pattern here is important..
-    projects: '**/*.Test.csproj'
+    # the pattern here is important.
+    #projects: '**/*.Test.csproj'
+    projects: '**/*.*Test.csproj'
     # ------------------------------------------------------------------------
 
 # after the test run the coverage.cobertura.xml can be used by the RaptorGenerator tool
