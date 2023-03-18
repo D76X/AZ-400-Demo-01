@@ -67,14 +67,42 @@ steps:
 # Run Unit Tests in an Azure Pipeline
 # https://www.udemy.com/course/azure100/learn/lecture/33318476#overview
 
+# if you want to use test coverage tools in the pipeline you need to let it install the tools
+# that are published in the tools MANIFEST file for your solution
+- task: DotNetCoreCLI@2
+  displayName: 'Install .NET tools from local manifest'
+  inputs:
+    command: custom
+    custom: tool
+    arguments: 'restore'
+
 - task: DotNetCoreCLI@2
   displayName: 'Run unit tests - $(buildConfiguration)'
   inputs:
     command: 'test'
-    arguments: '--no-build --configuration $(buildConfiguration)'
-    #arguments: '--no-build --configuration $(buildConfiguration) /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura /p:CoverletOutput=$(Build.SourcesDirectory)/TestResults/Coverage/'
-    #publishTestResults: true
+    # ------------------------------------------------------------------------
+    # This is the minimum that must be done to run the test on the pipeline
+    # arguments: '--no-build --configuration $(buildConfiguration)'
+    # ------------------------------------------------------------------------
+    # If you want to run the test and also the test coverage with the tools
+    # then you must provide the right /p: values such as to produce the 
+    # test results file of the desired format **coverage.cobertura.xml**, etc.
+    arguments: '--no-build --configuration $(buildConfiguration) /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura /p:CoverletOutput=$(Build.SourcesDirectory)/TestResults/Coverage/'
+    publishTestResults: true
+    # ------------------------------------------------------------------------
+    # the pattern here is important..
     projects: '**/*.Test.csproj'
+    # ------------------------------------------------------------------------
+
+# after the test run the coverage.cobertura.xml can be used by the RaptorGenerator tool
+# to produce the HtmlInline_AzurePipelines that will be understood and used by the 
+# Azure Pipeline reporting and displayed to the Test tab after the run
+- task: DotNetCoreCLI@2
+  displayName: 'Create code coverage report'
+  inputs:
+    command: custom
+    custom: tool
+    arguments: 'run reportgenerator -reports:$(Build.SourcesDirectory)/**/coverage.cobertura.xml -targetdir:$(Build.SourcesDirectory)/CodeCoverage -reporttypes:HtmlInline_AzurePipelines'
 
 # ---------------------------------------------------------
 # Publish 
