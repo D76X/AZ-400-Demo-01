@@ -29,7 +29,7 @@ resources:
     ports:
     - 1433:1433
     env:
-      MSSQL_SA_PASSWORD: "P@ssword1$"
+      MSSQL_SA_PASSWORD: P@ssword1$
       ACCEPT_EULA: Y
   
 
@@ -127,6 +127,7 @@ steps:
     # ------------------------------------------------------------------------
     # the pattern here is important.
     #projects: '**/*.Test.csproj'
+    #..
     projects: '**/*.*Test.csproj'
     # ------------------------------------------------------------------------
 
