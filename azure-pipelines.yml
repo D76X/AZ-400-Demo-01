@@ -80,6 +80,15 @@ steps:
   #      echo "SonarCloudProjectKey=$(SonarCloudProjectKey)"
   #      echo "SonarCloudProjectName=$(SonarCloudProjectName)"
 
+- task: Bash@3
+  displayName: Print all Env Vars defined on the agent    
+  inputs:
+    targetType: 'inline'
+    script: 'env|sort'
+
+# --------------------------------------------------------- 
+# BUILD PIPELINE ASSETS
+
 - task: NuGetCommand@2
   displayName: 'restore NuGet packages'
   inputs:
@@ -95,7 +104,7 @@ steps:
     projects: '**/*.sln'
 
 # --------------------------------------------------------- 
-# Run Unit Tests
+# RUN UNITS AND INTEGRATION TESTS
 
 # Exercise - Perform code coverage testing
 # https://learn.microsoft.com/en-us/training/modules/run-quality-tests-build-pipeline/6-perform-code-coverage
@@ -151,7 +160,7 @@ steps:
     summaryFileLocation: '$(Build.SourcesDirectory)/**/coverage.cobertura.xml'
 
 # ---------------------------------------------------------
-# Publish 
+# PUBLISH PIPELINE ASSETS 
 
 - task: DotNetCoreCLI@2
   displayName: 'dotnet publish $(buildConfiguration)'
