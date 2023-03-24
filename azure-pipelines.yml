@@ -53,19 +53,19 @@ variables:
   Database__UserId: "SA"
   Database__Password: "P@ssword1$"  
   # -- For a pipeline in Azure DevOps Pipelines ----
-  Database:IntegratedSecurity: "false"
-  Database:Server: "sqlserver"
-  Database:Port: "1433"
-  Database:UserId: "SA"
-  Database:Password: "P@ssword1$"  
+  # Database:IntegratedSecurity: "false"
+  # Database:Server: "sqlserver"
+  # Database:Port: "1433"
+  # Database:UserId: "SA"
+  # Database:Password: "P@ssword1$"  
   # -- For a pipeline in Azure DevOps Pipelines ----
   # File transforms and variable substitution reference  
   # https://learn.microsoft.com/en-us/azure/devops/pipelines/tasks/transforms-variable-substitution?view=azure-devops&tabs=yaml#jsonvarsubs
-  Database.IntegratedSecurity: "false"
-  Database.Server: "sqlserver"
-  Database.Port: "1433"
-  Database.UserId: "SA"
-  Database.Password: "P@ssword1$"    
+  # Database.IntegratedSecurity: "false"
+  # Database.Server: "sqlserver"
+  # Database.Port: "1433"
+  # Database.UserId: "SA"
+  # Database.Password: "P@ssword1$"    
   # --------------------------------------------
 
 steps:
