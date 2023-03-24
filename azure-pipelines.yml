@@ -46,11 +46,18 @@ variables:
   # --------------------------------------------
   # These variables are going to override the values provided by the file
   # appsettings.test.json of the project BusinessLogic.IntegrationTest
+  # -- For a pipeline in GitHub ----
   Database__IntegratedSecurity: "false"
   Database__Server: "sqlserver"
   Database__Port: "1433"
   Database__UserId: "SA"
   Database__Password: "P@ssword1$"  
+  # -- For a pipeline in Azure DevOps Pipelines ----
+  Database:IntegratedSecurity: "false"
+  Database:Server: "sqlserver"
+  Database:Port: "1433"
+  Database:UserId: "SA"
+  Database:Password: "P@ssword1$"  
   # --------------------------------------------
 
 steps:
