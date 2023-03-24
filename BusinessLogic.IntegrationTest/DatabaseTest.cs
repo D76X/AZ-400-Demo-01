@@ -36,16 +36,18 @@ namespace BusinessLogic.IntegrationTest
 			string connectionString = "";
 			string databaseName = "musiccatalogtests_" + Guid.NewGuid();
 
-			// Overrides from the Env Vars use the __ separator so that it works on
+			// Overrides from the Env Vars
+			// 1- use the __ separator so that it works on
+			// 2- use the capitalization DATABASE__VARIABLENAME as Azure DevOps does it so
 			// Azure DevOps Pipelines
 			// and also on
 			// with GigHub Pipelines
 
-            var envVarValueIntegratedSecurity = Environment.GetEnvironmentVariable("Database__IntegratedSecurity");
-            var envVarValueServer = Environment.GetEnvironmentVariable("Database__Server");
-            var envVarValuePort = Environment.GetEnvironmentVariable("Database__Port");
-            var envVarValueUserId = Environment.GetEnvironmentVariable("Database__UserId");
-            var envVarValuePassword = Environment.GetEnvironmentVariable("Database__Password");
+            var envVarValueIntegratedSecurity = Environment.GetEnvironmentVariable("DATABASE__INTEGRATEDSECURITY");
+            var envVarValueServer = Environment.GetEnvironmentVariable("DATABASE__SERVER");
+            var envVarValuePort = Environment.GetEnvironmentVariable("DATABASE__PORT");
+            var envVarValueUserId = Environment.GetEnvironmentVariable("DATABASE__USERID");
+            var envVarValuePassword = Environment.GetEnvironmentVariable("DATABASE__PASSWORD");
 			
             var integratedSecurity = envVarValueIntegratedSecurity ?? config["Database:IntegratedSecurity"];
             
