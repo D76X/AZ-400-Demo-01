@@ -79,11 +79,25 @@ namespace BusinessLogic.IntegrationTest
             // ********************************************
             // https://stackoverflow.com/questions/45712122/connection-string-for-sqlserver-in-docker-container
 			//connectionString = @"Server=127.0.0.1,1401; Database=Master; User Id=SA; Password=YourSTRONG!Passw0rd";
-			// test-1
+			
+			// **************************
+            // test-1
             //connectionString = $"Server=127.0.0.1,1433; Database={databaseName}; User Id=SA; Password=P@ssword1$";
             // test-2
             connectionString = $"Server=localhost,1433; Database={databaseName}; User Id=SA; Password=P@ssword1$";
+            /*
+			Error Message:
+            Microsoft.Data.SqlClient.SqlException : 
+			A connection was successfully established with the server, 
+			but then an error occurred during the pre-login handshake. 
+			(provider: TCP Provider, error: 35 - An internal exception was caught)
+----		
+			System.Security.Authentication.AuthenticationException : 
+			The remote certificate was rejected by the provided RemoteCertificateValidationCallback
+			*/
+            // **************************
 
+            connectionString = $"Server=localhost,1433; Database={databaseName}; User Id=SA; Password=P@ssword1$; TrustServerCertificate=True;MultiSubnetFailover=True";
             // ********************************************
 
             builder.UseSqlServer(connectionString)
