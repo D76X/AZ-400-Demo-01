@@ -13,11 +13,14 @@ trigger:
 - development
 
 # --------------------------------------------------------------------------------------
+# Service containers
 # https://learn.microsoft.com/en-us/azure/devops/pipelines/process/service-containers?view=azure-devops&tabs=yaml
 # --------------------------------------------------------------------------------------
-# https://app.pluralsight.com/course-player?clipId=102ad897-c4ce-436a-8679-e5ba255aa081 
-# --------------------------------------------------------------------------------------
+# DevOps with GitHub and Azure: Implementing CI/CD with GitHub Actions 
+# Integration Testing with SQL Database
 # https://app.pluralsight.com/course-player?clipId=31e0c3a1-6211-48d8-9552-5be87fb56e43
+# Service Container For Integration Testing
+# https://app.pluralsight.com/course-player?clipId=102ad897-c4ce-436a-8679-e5ba255aa081 
 # --------------------------------------------------------------------------------------
 # Microsoft SQL Server - Ubuntu based images
 # https://hub.docker.com/_/microsoft-mssql-server
@@ -25,13 +28,16 @@ trigger:
 resources:
   containers:
   - container: sqlserver
-    image: mcr.microsoft.com/mssql/server:2019-latest
+    #image: mcr.microsoft.com/mssql/server:2019-latest
+    image: mcr.microsoft.com/mssql/server:2017-latest
     ports:
-      - '1433:1433'
+      - 1433:1433
+    #options: --name mssql
+    options: --name sqlserver
     env:
       MSSQL_SA_PASSWORD: P@ssword1$
-      ACCEPT_EULA: Y
-  
+      ACCEPT_EULA: Y 
+      #MSSQL_PID: Express 
 
 pool:
   vmImage: ubuntu-latest
@@ -42,6 +48,9 @@ services:
   #redis: redis
 
 variables:
+  # --------------------------------------------
+  system.debug: true
+  # --------------------------------------------
   buildConfiguration: 'Release'
   # --------------------------------------------
   # These variables are going to override the values provided by the file
@@ -100,6 +109,36 @@ steps:
   inputs:
     targetType: 'inline'
     script: 'env|sort'
+
+# ------------------------------ FOR DOCKER START ------------------------------
+# https://developercommunity.visualstudio.com/t/working-examples-using-service-container-of-sql-se/1159426
+
+# use a delay to give the sqlsevr container some time to start    
+- task: PowerShell@2
+  displayName: Delay for Docker    
+  inputs:
+    targetType: 'inline'
+    script: |
+      # Write your PowerShell commands here.        
+      start-sleep -s 10    
+      
+- task: CmdLine@2
+  displayName: Login to sqlserver     
+  inputs:
+    script: 'docker logs sqlserver'
+    #script: 'docker logs mssql'
+
+- task: CmdLine@2
+  displayName: List Docker containers      
+  inputs:
+    script: 'docker ps -all'    
+
+- task: CmdLine@2
+displayName: Run test query on sqlserve       
+  inputs:
+    script: 'sqlcmd -S localhost -d master -U sa -P P@ssword1$ -Q "SELECT @@version;"'
+#   script: 'sqlcmd -S localhost -d master -U sa -P Password123 -Q "SELECT @@version;"'
+# ------------------------------ FOR DOCKER END ------------------------------
 
 # --------------------------------------------------------- 
 # BUILD PIPELINE ASSETS
@@ -229,5 +268,3 @@ steps:
     #targetPath: '$(Pipeline.Workspace)/s/WebApp-01/bin/Release/net6.0/publish.zip'
     artifact: 'webapp01'
     publishLocation: 'pipeline'
-  
-
