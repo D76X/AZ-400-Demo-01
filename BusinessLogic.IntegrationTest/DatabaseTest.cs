@@ -75,7 +75,16 @@ namespace BusinessLogic.IntegrationTest
 				output.WriteLine("Connection String to remoted SQL Server: " + connectionString);
 			}
 
-			builder.UseSqlServer(connectionString)
+
+            // ********************************************
+            // https://stackoverflow.com/questions/45712122/connection-string-for-sqlserver-in-docker-container
+			//connectionString = @"Server=127.0.0.1,1401; Database=Master; User Id=SA; Password=YourSTRONG!Passw0rd";
+			// test-1
+            connectionString = $"Server=127.0.0.1,1433; Database={databaseName}; User Id=SA; Password=P@ssword1$";
+
+            // ********************************************
+
+            builder.UseSqlServer(connectionString)
 				.UseInternalServiceProvider(serviceProvider);
 
 			_context = new MusicCatalogContext(builder.Options);
