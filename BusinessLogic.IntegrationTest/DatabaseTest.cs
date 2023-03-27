@@ -82,7 +82,7 @@ namespace BusinessLogic.IntegrationTest
             // test-1
             //connectionString = $"Server=127.0.0.1,1433; Database={databaseName}; User Id=SA; Password=P@ssword1$";
             // test-2 OK
-            connectionString = $"Server=localhost,1433; Database={databaseName}; User Id=SA; Password=P@ssword1$";
+            //connectionString = $"Server=localhost,1433; Database={databaseName}; User Id=SA; Password=P@ssword1$";
             /*
 			Error Message:
             Microsoft.Data.SqlClient.SqlException : 
