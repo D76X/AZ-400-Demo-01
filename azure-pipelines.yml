@@ -25,31 +25,47 @@ trigger:
 # Microsoft SQL Server - Ubuntu based images
 # https://hub.docker.com/_/microsoft-mssql-server
 # --------------------------------------------------------------------------------------
+# The following two references have been used as a guide for the part of this pipeline  
+# that deals with the use of the MS SQL Service Container for Integration Tests.
+#
+# How do I get MSSQL service container working in Azure DevOps pipeline?
+# https://stackoverflow.com/questions/63538477/how-do-i-get-mssql-service-container-working-in-azure-devops-pipeline
+#
+# Need examples using service container of sql server  
+# https://developercommunity.visualstudio.com/t/working-examples-using-service-container-of-sql-se/1159426
+# --------------------------------------------------------------------------------------  
 resources:
   containers:
   - container: sqlserver
-    #image: mcr.microsoft.com/mssql/server:2019-latest
-    image: mcr.microsoft.com/mssql/server:2017-latest
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    #image: mcr.microsoft.com/mssql/server:2017-latest
     ports:
-      - 1433:1433
-    #options: --name mssql
+      - 1433:1433    
     options: --name sqlserver
     env:
       MSSQL_SA_PASSWORD: P@ssword1$
       ACCEPT_EULA: Y 
-      #MSSQL_PID: Express 
+      #MSSQL_PID: Express # this may be Developer | Express | Standard | Enterprise | EnterpriseCore 
+      #Developer Edition is the default if no MSSQL_PID environment variable is supplied
 
 pool:
   vmImage: ubuntu-latest
 
+# Service containers  
 # https://learn.microsoft.com/en-us/azure/devops/pipelines/process/service-containers?view=azure-devops&tabs=yaml
+# Here you declare the name of the Service containers available to the pipeline
+# The format is 
+# LABLE-OF-THE-SERVICE-CONTAINER-IN THE PIPELINE: name of the container as in the containers section of the pipeline yml 
 services:
   sqlserver: sqlserver
   #redis: redis
 
 variables:
+  
   # --------------------------------------------
-  system.debug: true
+  # Azure DevOps Pipelines devices
+  # enable this to print debug info to the Azure DevOps Pipelines console
+  # system.debug: true   
   # --------------------------------------------
   buildConfiguration: 'Release'
   # --------------------------------------------
@@ -110,10 +126,17 @@ steps:
     targetType: 'inline'
     script: 'env|sort'
 
-# ------------------------------ FOR DOCKER START ------------------------------
-# https://developercommunity.visualstudio.com/t/working-examples-using-service-container-of-sql-se/1159426
+# -- DOCKER DEVICES | SERVICE CONTAINERS ------------------------------------------------------------------
 
+# Need examples using service container of sql server  
+# https://developercommunity.visualstudio.com/t/working-examples-using-service-container-of-sql-se/1159426
 # use a delay to give the sqlsevr container some time to start    
+#
+# How do I get MSSQL service container working in Azure DevOps pipeline?
+# https://stackoverflow.com/questions/63538477/how-do-i-get-mssql-service-container-working-in-azure-devops-pipeline
+#
+# In this last post they say that a short delay may be required to give the container the time to be spun up
+# in the pipeline
 - task: PowerShell@2
   displayName: Delay for Docker    
   inputs:
@@ -138,7 +161,7 @@ steps:
   inputs:
     script: 'sqlcmd -S localhost -d master -U sa -P P@ssword1$ -Q "SELECT @@version;"'
 #   script: 'sqlcmd -S localhost -d master -U sa -P Password123 -Q "SELECT @@version;"'
-# ------------------------------ FOR DOCKER END ------------------------------
+# --------------------------------------------------------------------------------------------------------
 
 # --------------------------------------------------------- 
 # BUILD PIPELINE ASSETS
