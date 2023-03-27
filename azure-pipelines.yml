@@ -73,7 +73,7 @@ variables:
   # appsettings.test.json of the project BusinessLogic.IntegrationTest
   # -- For a pipeline in GitHub ----
   Database__IntegratedSecurity: "false"
-  Database__Server: "sqlserver"
+  Database__Server: "localhost" #"sqlserver"
   Database__Port: "1433"
   Database__UserId: "SA"
   Database__Password: "P@ssword1$"  
