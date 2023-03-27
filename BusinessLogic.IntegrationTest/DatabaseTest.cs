@@ -71,19 +71,17 @@ namespace BusinessLogic.IntegrationTest
                 var userName = envVarValueUserId ?? config["Database:UserId"];
 				var password = envVarValuePassword ?? config["Database:Password"];
 				
-                connectionString = "Server=" + serverName + ";Database=" + databaseName + ";User Id=" + userName + ";Password=" + password;
-				output.WriteLine("Connection String to remoted SQL Server: " + connectionString);
+                //connectionString = "Server=" + serverName + ";Database=" + databaseName + ";User Id=" + userName + ";Password=" + password;
+                var securityBit = "TrustServerCertificate=True;MultiSubnetFailover=True";
+                connectionString =$"Server={serverName};Database={databaseName};User Id={userName};Password={password};{securityBit}";
+
+                output.WriteLine("Connection String to remote SQL Server: " + connectionString);
 			}
 
 
-            // ********************************************
-            // https://stackoverflow.com/questions/45712122/connection-string-for-sqlserver-in-docker-container
-			//connectionString = @"Server=127.0.0.1,1401; Database=Master; User Id=SA; Password=YourSTRONG!Passw0rd";
-			
-			// **************************
             // test-1
             //connectionString = $"Server=127.0.0.1,1433; Database={databaseName}; User Id=SA; Password=P@ssword1$";
-            // test-2
+            // test-2 OK
             connectionString = $"Server=localhost,1433; Database={databaseName}; User Id=SA; Password=P@ssword1$";
             /*
 			Error Message:
@@ -96,8 +94,8 @@ namespace BusinessLogic.IntegrationTest
 			The remote certificate was rejected by the provided RemoteCertificateValidationCallback
 			*/
             // **************************
-
-            connectionString = $"Server=localhost,1433; Database={databaseName}; User Id=SA; Password=P@ssword1$; TrustServerCertificate=True;MultiSubnetFailover=True";
+			// this works!
+            //connectionString = $"Server=localhost,1433; Database={databaseName}; User Id=SA; Password=P@ssword1$; TrustServerCertificate=True;MultiSubnetFailover=True";
             // ********************************************
 
             builder.UseSqlServer(connectionString)
