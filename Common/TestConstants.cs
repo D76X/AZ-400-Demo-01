@@ -12,5 +12,7 @@
 		public const string EnvVarNameAzdoTestDbPassword = @"AZDO_TEST_DB_INTEGRATED_SECURITY";
 		public const string EnvVarNameAzdoTestDbConnectionStringOverride = @"AZDO_TEST_DB_INTEGRATED_SECURITY";
 		public const string EnvVarNameAzdoTestDbSecurityTokens = @"AZDO_TEST_DB_INTEGRATED_SECURITY_TOKENS";
+
+		public const string DatabaseNameToken = @"{databaseName}";
 	}
 }
