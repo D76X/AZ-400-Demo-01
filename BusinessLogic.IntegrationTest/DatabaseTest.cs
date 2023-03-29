@@ -82,8 +82,13 @@ namespace BusinessLogic.IntegrationTest
 				output.WriteLine("SQL Server Connection String to remote DB: " + connectionString);
 			}
 
-            builder
-	            .UseSqlServer(connectionString)
+			// **************************
+			// this works!
+			connectionString = $"Server=localhost,1433; Database={databaseName}; User Id=SA; Password=P@ssword1$; TrustServerCertificate=True;MultiSubnetFailover=True";
+			// ********************************************
+
+			builder
+				.UseSqlServer(connectionString)
 				.UseInternalServiceProvider(serviceProvider);
 
 			_context = new MusicCatalogContext(builder.Options);
