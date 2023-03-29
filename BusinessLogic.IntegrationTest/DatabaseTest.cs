@@ -77,7 +77,7 @@ namespace BusinessLogic.IntegrationTest
 				
 				connectionString = EnvVarValueDbConnectionStringOverride?
 					                   .Replace(TestConstants.DatabaseNameToken, databaseName) ?? 
-				                   $"Server={serverName};Database={databaseName};User Id={userName};Password={password};{securityTokens}";
+				                   $"Server={serverName}; Database={databaseName}; User Id={userName}; Password={password}; {securityTokens}";
 				
 				output.WriteLine("SQL Server Connection String to remote DB: " + connectionString);
 			}

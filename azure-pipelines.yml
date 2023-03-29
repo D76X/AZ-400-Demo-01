@@ -76,7 +76,9 @@ variables:
   # constructs the connection string to the MS SQL Server
   # to be used in the ITs
   # ----------------------------------------------------
-  AZDO_TEST_DB_CONNECTION_STRING_OVERRIDE: "Server=localhost,1433; Database={databaseName}; User Id=SA; Password=P@ssword1$; TrustServerCertificate=True;MultiSubnetFailover=True"
+  # the following override wors!
+  # AZDO_TEST_DB_CONNECTION_STRING_OVERRIDE: "Server=localhost,1433; Database={databaseName}; User Id=SA; Password=P@ssword1$; TrustServerCertificate=True;MultiSubnetFailover=True"
+  # Server=localhost,1433; Database={databaseName}; User Id=SA; Password=P@ssword1$; TrustServerCertificate=True;MultiSubnetFailover=True
   AZDO_TEST_DB_INTEGRATED_SECURITY: "false"
   AZDO_TEST_DB_SERVER: "localhost" #"sqlserver" will not work!
   AZDO_TEST_DB_PORT: "1433"
