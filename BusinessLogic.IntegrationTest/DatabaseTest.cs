@@ -84,7 +84,7 @@ namespace BusinessLogic.IntegrationTest
 
 			// **************************
 			// this works!
-			connectionString = $"Server=localhost,1433; Database={databaseName}; User Id=SA; Password=P@ssword1$; TrustServerCertificate=True;MultiSubnetFailover=True";
+			// connectionString = $"Server=localhost,1433; Database={databaseName}; User Id=SA; Password=P@ssword1$; TrustServerCertificate=True;MultiSubnetFailover=True";
 			// ********************************************
 
 			builder
