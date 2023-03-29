@@ -74,10 +74,7 @@ namespace BusinessLogic.IntegrationTest
 				var password = EnvVarValueDbPassword ?? config["Database:Password"];
 				// Refs https://github.com/dotnet/SqlClient/issues/1479
 				var securityTokens = EnvVarValueDbSecurityTokens ?? config["Database:Password"];
-
-				var connectionStringOverride = EnvVarValueDbConnectionStringOverride?
-					.Replace(TestConstants.DatabaseNameToken, databaseName);
-
+				
 				connectionString = EnvVarValueDbConnectionStringOverride?
 					                   .Replace(TestConstants.DatabaseNameToken, databaseName) ?? 
 				                   $"Server={serverName};Database={databaseName};User Id={userName};Password={password};{securityTokens}";
