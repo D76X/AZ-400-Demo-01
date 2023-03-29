@@ -1,4 +1,5 @@
 ﻿using BusinessLogic.Data;
+using Common;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -8,7 +9,28 @@ namespace BusinessLogic.IntegrationTest
 {
 	public class DatabaseTests : IDisposable
 	{
-		MusicCatalogContext _context;
+		private static string? EnvVarValueDbConnectionStringOverride =
+			Environment.GetEnvironmentVariable(TestConstants.EnvVarNameAzdoTestDbConnectionStringOverride);
+		
+		private static readonly string? EnvVarValueDbIntegratedSecurity = 
+			Environment.GetEnvironmentVariable(TestConstants.EnvVarNameAzdoTestDbIntegratedSecurity);
+		
+		private static readonly string? EnvVarValueDbServer = 
+			Environment.GetEnvironmentVariable(TestConstants.EnvVarNameAzdoTestDbServer);
+		
+		private static readonly string? EnvVarValueDbPort = 
+			Environment.GetEnvironmentVariable(TestConstants.EnvVarNameAzdoTestDbPort);
+		
+		private static readonly string? EnvVarValueDbUserId = 
+			Environment.GetEnvironmentVariable(TestConstants.EnvVarNameAzdoTestDbUserid);
+		
+		private static readonly string? EnvVarValueDbPassword = 
+			Environment.GetEnvironmentVariable(TestConstants.EnvVarNameAzdoTestDbPassword);
+
+		private static readonly string? EnvVarValueDbSecurityTokens =
+			Environment.GetEnvironmentVariable(TestConstants.EnvVarNameAzdoTestDbSecurityTokens);
+
+		readonly MusicCatalogContext _context;
 		private readonly ITestOutputHelper _output;
 
 		public static IConfiguration InitConfiguration()
@@ -30,75 +52,37 @@ namespace BusinessLogic.IntegrationTest
 				.AddEntityFrameworkSqlServer()
 				.BuildServiceProvider();
 
+			string connectionString = null;
 			var builder = new DbContextOptionsBuilder<MusicCatalogContext>();
-
-			// build connection string depending on security model
-			string connectionString = "";
 			string databaseName = "musiccatalogtests_" + Guid.NewGuid();
 
-			// Overrides from the Env Vars
-			// 1- use the __ separator so that it works on
-			// 2- use the capitalization DATABASE__VARIABLENAME as Azure DevOps does it so
-			// Azure DevOps Pipelines
-			// and also on
-			// with GigHub Pipelines
-
-            var envVarValueIntegratedSecurity = Environment.GetEnvironmentVariable("DATABASE__INTEGRATEDSECURITY");
-            var envVarValueServer = Environment.GetEnvironmentVariable("DATABASE__SERVER");
-            var envVarValuePort = Environment.GetEnvironmentVariable("DATABASE__PORT");
-            var envVarValueUserId = Environment.GetEnvironmentVariable("DATABASE__USERID");
-            var envVarValuePassword = Environment.GetEnvironmentVariable("DATABASE__PASSWORD");
-			
-            var integratedSecurity = envVarValueIntegratedSecurity ?? config["Database:IntegratedSecurity"];
-            
-            if ( integratedSecurity == "true")
+			if ( EnvVarValueDbIntegratedSecurity == "true")
 			{
-				// using Integrated Security for local testing
-				_output.WriteLine("Using local SQL Server...");
-                connectionString = $"Server=(localdb)\\mssqllocaldb;Database=" + databaseName + ";Trusted_Connection=True;MultipleActiveResultSets=true";
-				output.WriteLine("Connection String to remoted SQL Server: " + connectionString);
+				// using Integrated Security for local testing which does not work in a DevOps pipeline
+				connectionString = $"Server=(localdb)\\mssqllocaldb;Database=" + databaseName + ";Trusted_Connection=True;MultipleActiveResultSets=true";
+				output.WriteLine("SQL Server Connection String to Local DB: " + connectionString);
 			}
 			else
 			{
-				// using SQL authentication (username/password)  for remote database (GitHub Actions Service Container)
+				// in any DevOps Pipeline you need some kind of remote SQL Server
 				_output.WriteLine("Using Remote SQL Server...");
 
-                var server = envVarValueServer ?? config["Database:Server"];
-                var port = envVarValuePort ?? config["Database:Port"];
-				//var serverName = config["Database:Server"] + "," + config["Database:Port"];
-				var serverName = server + "," + port;
-				
-                var userName = envVarValueUserId ?? config["Database:UserId"];
-				var password = envVarValuePassword ?? config["Database:Password"];
-				
-                //connectionString = "Server=" + serverName + ";Database=" + databaseName + ";User Id=" + userName + ";Password=" + password;
-                var securityBit = "TrustServerCertificate=True;MultiSubnetFailover=True";
-                connectionString =$"Server={serverName};Database={databaseName};User Id={userName};Password={password};{securityBit}";
+                var server = EnvVarValueDbServer ?? config["Database:Server"];
+                var port = EnvVarValueDbPort ?? config["Database:Port"];
+                var serverName = server + "," + port;
+                var userName = EnvVarValueDbUserId ?? config["Database:UserId"];
+				var password = EnvVarValueDbPassword ?? config["Database:Password"];
+				// Refs https://github.com/dotnet/SqlClient/issues/1479
+				var securityTokens = EnvVarValueDbSecurityTokens ?? config["Database:Password"];
 
-                output.WriteLine("Connection String to remote SQL Server: " + connectionString);
+				connectionString = EnvVarValueDbConnectionStringOverride ?? 
+				                   $"Server={serverName};Database={databaseName};User Id={userName};Password={password};{securityTokens}";
+
+				output.WriteLine("SQL Server Connection String to remote DB: " + connectionString);
 			}
 
-
-            // test-1
-            //connectionString = $"Server=127.0.0.1,1433; Database={databaseName}; User Id=SA; Password=P@ssword1$";
-            // test-2 OK
-            //connectionString = $"Server=localhost,1433; Database={databaseName}; User Id=SA; Password=P@ssword1$";
-            /*
-			Error Message:
-            Microsoft.Data.SqlClient.SqlException : 
-			A connection was successfully established with the server, 
-			but then an error occurred during the pre-login handshake. 
-			(provider: TCP Provider, error: 35 - An internal exception was caught)
-----		
-			System.Security.Authentication.AuthenticationException : 
-			The remote certificate was rejected by the provided RemoteCertificateValidationCallback
-			*/
-            // **************************
-			// this works!
-            //connectionString = $"Server=localhost,1433; Database={databaseName}; User Id=SA; Password=P@ssword1$; TrustServerCertificate=True;MultiSubnetFailover=True";
-            // ********************************************
-
-            builder.UseSqlServer(connectionString)
+            builder
+	            .UseSqlServer(connectionString)
 				.UseInternalServiceProvider(serviceProvider);
 
 			_context = new MusicCatalogContext(builder.Options);
@@ -126,7 +110,5 @@ namespace BusinessLogic.IntegrationTest
 		{
 			_context.Database.EnsureDeleted();
 		}
-
-
 	}
 }
