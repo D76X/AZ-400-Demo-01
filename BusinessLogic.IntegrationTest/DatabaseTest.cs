@@ -52,7 +52,7 @@ namespace BusinessLogic.IntegrationTest
 				.AddEntityFrameworkSqlServer()
 				.BuildServiceProvider();
 
-			string connectionString = null;
+			string? connectionString = null;
 			var builder = new DbContextOptionsBuilder<MusicCatalogContext>();
 			string databaseName = "musiccatalogtests_" + Guid.NewGuid();
 
