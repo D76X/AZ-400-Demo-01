@@ -74,7 +74,10 @@ variables:
   # METHOD
   # Use custom pipeline ENV_VARs to control the code that 
   # constructs the connection string to the MS SQL Server
-  # to be used in the ITs
+  # to be used in the ITs. 
+  # Notice that the name of the EnvVars are all uppercase
+  # as Azure DevOps will anyway make them so even if the
+  # yml the name have lowercase chars.
   # ----------------------------------------------------
   # the following override wors!
   # AZDO_TEST_DB_CONNECTION_STRING_OVERRIDE: "Server=localhost,1433; Database={databaseName}; User Id=SA; Password=P@ssword1$; TrustServerCertificate=True;MultiSubnetFailover=True"

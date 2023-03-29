@@ -22,7 +22,7 @@ namespace BusinessLogic.IntegrationTest
 			Environment.GetEnvironmentVariable(TestConstants.EnvVarNameAzdoTestDbPort);
 		
 		private static readonly string? EnvVarValueDbUserId = 
-			Environment.GetEnvironmentVariable(TestConstants.EnvVarNameAzdoTestDbUserid);
+			Environment.GetEnvironmentVariable(TestConstants.EnvVarNameAzdoTestDbUserId);
 		
 		private static readonly string? EnvVarValueDbPassword = 
 			Environment.GetEnvironmentVariable(TestConstants.EnvVarNameAzdoTestDbPassword);
