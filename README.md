@@ -80,6 +80,109 @@ tested and tried through time and confortable with the current **GitFlow Workflo
 
 ---
 
+# [Unit Tests, Intergation Tests and Test Coverage]
+
+### References
+
+#### Microsoft Learn - Run quality tests in your build pipeline by using Azure Pipelines
+- [Exercise - Perform code coverage testing](https://learn.microsoft.com/en-us/training/modules/run-quality-tests-build-pipeline/6-perform-code-coverage)  
+
+#### Udemy - AZ-400 Designing and Implementing DevOps Certification 2022
+
+- [Run Unit Tests in an Azure Pipeline](https://www.udemy.com/course/azure100/learn/lecture/33318476#overview)  
+- [Code Coverage](https://www.udemy.com/course/azure100/learn/lecture/33318488#overview)  
+
+#### Microsoft Learn - Azure Pipelines
+- [Define container jobs (YAML)](https://learn.microsoft.com/en-us/azure/devops/pipelines/process/container-phases?view=azure-devops&ns-enrollment-id=kjqkhm88o2mk1z&viewFallbackFrom=azure-devops%3Fns-enrollment-type%3DCollection)  
+- [Service containers](https://learn.microsoft.com/en-us/azure/devops/pipelines/process/service-containers?view=azure-devops&tabs=yaml)  
+
+#### [DevOps with GitHub and Azure: Implementing CI/CD with GitHub Actions](https://app.pluralsight.com/library/courses/devops-github-azure-implementing-cicd-github-actions/table-of-contents)  
+- [Service Containers for Integration Tests](https://app.pluralsight.com/course-player?clipId=102ad897-c4ce-436a-8679-e5ba255aa081)  
+- [Integration Testing with a SQL Database](https://app.pluralsight.com/course-player?clipId=31e0c3a1-6211-48d8-9552-5be87fb56e43)  
+
+The following is the sequence of the **dotnet** commands to run in order to 
+
+1- install a **dotnet-tools.json MANIFEST FILE** to  [C:\VSProjects\MyProjetcs\AZ-400-Demo-01\.config] 
+2- install the tool [ReportGenerator](https://github.com/danielpalme/ReportGenerator)   
+3- add the **coverlet.msbuild package** to the test project
+4- run the Unit Tests in the test project locally with generation of the code coverage file **coverage.cobertura.xml** by means of the package **coverlet.msbuild package**
+5- produce the HTML reports by means of the tool [ReportGenerator](https://github.com/danielpalme/ReportGenerator) from the file **coverage.cobertura.xml**  
+
+```
+cd C:\VSProjects\MyProjetcs\AZ-400-Demo-01
+dotnet new tool-manifest
+dotnet tool install dotnet-reportgenerator-globaltool
+dotnet add BusinessLogic.Test package coverlet.msbuild
+dotnet test --no-build --configuration Release /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura /p:CoverletOutput=./TestResults/Coverage/
+dotnet tool run reportgenerator -reports:./BusinessLogic.Test/TestResults/Coverage/coverage.cobertura.xml -targetdir:./CodeCoverage -reporttypes:HtmlInline_AzurePipelines
+```
+
+The ouput of the local sun should be similar to the following example.
+Notice that a file named **coverage.cobertura.xml** is generated
+by the **RaptorGenerator** tool in a subfolder named **TestResults** of
+the first test project that is found by the tool.
+
+```
+ Passed!  - Failed:     0, Passed:     2, Skipped:     0, Total:     2, Duration: 3 ms - BusinessLogic.Test.dll (net6.0)
+
+Calculating coverage result...
+  Generating report '.\TestResults\Coverage\coverage.cobertura.xml'
+
++---------------+------+--------+--------+
+| Module        | Line | Branch | Method |
++---------------+------+--------+--------+
+| BusinessLogic | 7.4% | 0%     | 15.38% |
++---------------+------+--------+--------+
+
++---------+------+--------+--------+
+|         | Line | Branch | Method |
++---------+------+--------+--------+
+| Total   | 7.4% | 0%     | 15.38% |
++---------+------+--------+--------+
+| Average | 7.4% | 0%     | 15.38% |
++---------+------+--------+--------+
+
+
+Passed!  - Failed:     0, Passed:     1, Skipped:     0, Total:     1, Duration: < 1 ms - BusinessLogic.IntegrationTest.dll (net6.0)
+
+```
+
+---
+
+### Run Unit Tests without Integration Tests
+
+In first instance it is easier 
+
+### Run Integration Tests
+
+There are several options to run integration tests against a database in a pipeline and in general
+the choice depends on the pipeline and the database used. In the following following the assumption 
+will be that MS SQL Server is the database server of choice and the DevOp pipelines are either
+Azure DevOps or GitHub Actions.
+
+One option that is applicable to both Azure DevOps Pipelines and GitHub Actions is based on the usage
+of [Service containers](https://learn.microsoft.com/en-us/azure/devops/pipelines/process/service-containers?view=azure-devops&tabs=yaml)  .
+In particular the Service Container based on the Docker Image [Microsoft SQL Server - Ubuntu based images](https://hub.docker.com/_/microsoft-mssql-server)  .
+
+With this setup the pipeline spins up a container within a Job and the test logic together with appropriate
+configuration constructs a connection string to the MS SQL Server that runs inside the docker container
+on the same pipeline.
+
+The following are references to what is required to put in place this setup.
+
+- [Service containers](https://learn.microsoft.com/en-us/azure/devops/pipelines/process/service-containers?view=azure-devops&tabs=yaml)  
+- [Microsoft SQL Server - Ubuntu based images](https://hub.docker.com/_/microsoft-mssql-server)  
+- [Integration Testing with SQL Database](https://app.pluralsight.com/course-player?clipId=31e0c3a1-6211-48d8-9552-5be87fb56e43)  
+- [Service Container For Integration Testing](https://app.pluralsight.com/course-player?clipId=102ad897-c4ce-436a-8679-e5ba255aa081)   
+
+The following are references to some troubleshooting resources related to this setup.
+
+- [How do I get MSSQL service container working in Azure DevOps pipeline?](https://stackoverflow.com/questions/63538477/how-do-i-get-mssql-service-container-working-in-azure-devops-pipeline) 
+- [Need examples using service container of sql server](https://developercommunity.visualstudio.com/t/working-examples-using-service-container-of-sql-se/1159426)  
+- [Cannot connect to docker in Azure Pipelines](https://techcommunity.microsoft.com/t5/azure-devops/cannot-connect-to-docker-in-azure-pipelines/m-p/3511673)  
+
+---
+
 
 
 

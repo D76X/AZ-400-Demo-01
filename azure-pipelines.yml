@@ -12,12 +12,121 @@ trigger:
 - feature*
 - development
 
+# --------------------------------------------------------------------------------------
+# Service containers
+# https://learn.microsoft.com/en-us/azure/devops/pipelines/process/service-containers?view=azure-devops&tabs=yaml
+# --------------------------------------------------------------------------------------
+# DevOps with GitHub and Azure: Implementing CI/CD with GitHub Actions 
+# Integration Testing with SQL Database
+# https://app.pluralsight.com/course-player?clipId=31e0c3a1-6211-48d8-9552-5be87fb56e43
+# Service Container For Integration Testing
+# https://app.pluralsight.com/course-player?clipId=102ad897-c4ce-436a-8679-e5ba255aa081 
+# --------------------------------------------------------------------------------------
+# Microsoft SQL Server - Ubuntu based images
+# https://hub.docker.com/_/microsoft-mssql-server
+# --------------------------------------------------------------------------------------
+# The following two references have been used as a guide for the part of this pipeline  
+# that deals with the use of the MS SQL Service Container for Integration Tests.
+#
+# How do I get MSSQL service container working in Azure DevOps pipeline?
+# https://stackoverflow.com/questions/63538477/how-do-i-get-mssql-service-container-working-in-azure-devops-pipeline
+#
+# Need examples using service container of sql server  
+# https://developercommunity.visualstudio.com/t/working-examples-using-service-container-of-sql-se/1159426
+# --------------------------------------------------------------------------------------  
+resources:
+  containers:
+  - container: sqlserver
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    #image: mcr.microsoft.com/mssql/server:2017-latest
+    ports:
+      - 1433:1433    
+    options: --name sqlserver
+    env:
+      MSSQL_SA_PASSWORD: P@ssword1$
+      ACCEPT_EULA: Y 
+      #MSSQL_PID: Express # this may be Developer | Express | Standard | Enterprise | EnterpriseCore 
+      #Developer Edition is the default if no MSSQL_PID environment variable is supplied
+
 pool:
   vmImage: ubuntu-latest
 
-variables:
+# Service containers  
+# https://learn.microsoft.com/en-us/azure/devops/pipelines/process/service-containers?view=azure-devops&tabs=yaml
+# Here you declare the name of the Service containers available to the pipeline
+# The format is 
+# LABLE-OF-THE-SERVICE-CONTAINER-IN THE PIPELINE: name of the container as in the containers section of the pipeline yml 
+services:
+  sqlserver: sqlserver
+  #redis: redis
+
+variables:  
+  # ----------------------------------------------------
+  # Azure DevOps Pipelines devices
+  # enable this to print debug info to the Azure DevOps Pipelines console
+  # system.debug: true   
+  # ----------------------------------------------------
   buildConfiguration: 'Release'
-  
+  # ----------------------------------------------------
+  # For a pipeline in Azure DevOps Pipelines 
+  # Integration Testing with MSSQL Service Container
+  # 
+  # METHOD
+  # Use custom pipeline ENV_VARs to control the code that 
+  # constructs the connection string to the MS SQL Server
+  # to be used in the ITs. 
+  # Notice that the name of the EnvVars are all uppercase
+  # as Azure DevOps will anyway make them so even if the
+  # yml the name have lowercase chars.
+  # ----------------------------------------------------
+  # the following override wors!
+  # AZDO_TEST_DB_CONNECTION_STRING_OVERRIDE: "Server=localhost,1433; Database={databaseName}; User Id=SA; Password=P@ssword1$; TrustServerCertificate=True;MultiSubnetFailover=True"
+  AZDO_TEST_DB_INTEGRATED_SECURITY: "false"
+  AZDO_TEST_DB_SERVER: "localhost" #"sqlserver" will not work!
+  AZDO_TEST_DB_PORT: "1433"
+  AZDO_TEST_DB_USERID: "SA"
+  AZDO_TEST_DB_PASSWORD: "P@ssword1$"  
+  AZDO_TEST_DB_SECURITY_TOKENS: "TrustServerCertificate=True;MultiSubnetFailover=True"  
+  # ----------------------------------------------------
+  # Integration Testing with MSSQL Service Container
+  # 
+  # METHOD
+  # File transforms and JSON variable substitution variable
+  # substitution   
+  # https://learn.microsoft.com/en-us/azure/devops/pipelines/tasks/transforms-variable-substitution?view=azure-devops&tabs=yaml#jsonvarsubs
+  # ----------------------------------------------------
+  # Database.IntegratedSecurity: "false"
+  # Database.Server: "sqlserver"
+  # Database.Port: "1433"
+  # Database.UserId: "SA"
+  # Database.Password: "P@ssword1$"    
+  # ----------------------------------------------------
+  # For pipelines in GitHub Actions
+  # Integration Testing with MSSQL Service Container
+  #
+  # DevOps with GitHub and Azure: Implementing CI/CD with GitHub Actions
+  # Service Container For Integration Testing
+  # https://app.pluralsight.com/course-player?clipId=102ad897-c4ce-436a-8679-e5ba255aa081
+  #
+  # Integration Testing with a SQL Database
+  # https://app.pluralsight.com/course-player?clipId=31e0c3a1-6211-48d8-9552-5be87fb56e43
+  #
+  # ----------------------------------------------------
+  # These variables are going to override the values provided by the 
+  # file appsettings.test.json of the project BusinessLogic.IntegrationTest 
+  # However, this just does not work the in Azure DevOps pipelines
+  # and the Database__XXX appear in the in the Azure DevOps pipeline
+  # as env vars but do not automatically replace the corresponding 
+  # settings defined in appsettings.(test.)json as they do when the
+  # pipeline is run on GitHub.
+  #  
+  Database__IntegratedSecurity: "false"
+  Database__Server: "localhost" #"sqlserver" ?
+  Database__Port: "1433"
+  Database__UserId: "SA"
+  Database__Password: "P@ssword1$"  
+  # --------------------------------------------
+
 steps:
 - script: echo Hello, world!
   displayName: 'Run a one-line script'
@@ -45,6 +154,52 @@ steps:
   #      echo "SonarCloudProjectKey=$(SonarCloudProjectKey)"
   #      echo "SonarCloudProjectName=$(SonarCloudProjectName)"
 
+- task: Bash@3
+  displayName: Print all Env Vars defined on the agent    
+  inputs:
+    targetType: 'inline'
+    script: 'env|sort'
+
+# -- DOCKER DEVICES | SERVICE CONTAINERS ------------------------------------------------------------------
+
+# Need examples using service container of sql server  
+# https://developercommunity.visualstudio.com/t/working-examples-using-service-container-of-sql-se/1159426
+# use a delay to give the sqlsevr container some time to start    
+#
+# How do I get MSSQL service container working in Azure DevOps pipeline?
+# https://stackoverflow.com/questions/63538477/how-do-i-get-mssql-service-container-working-in-azure-devops-pipeline
+#
+# In this last post they say that a short delay may be required to give the container the time to be spun up
+# in the pipeline
+- task: PowerShell@2
+  displayName: Delay for Docker    
+  inputs:
+    targetType: 'inline'
+    script: |
+      # Write your PowerShell commands here.        
+      start-sleep -s 10    
+      
+- task: CmdLine@2
+  displayName: Login to sqlserver     
+  inputs:
+    script: 'docker logs sqlserver'
+    #script: 'docker logs mssql'
+
+- task: CmdLine@2
+  displayName: List Docker containers      
+  inputs:
+    script: 'docker ps -all'    
+
+- task: CmdLine@2
+  displayName: Run test query on sqlserver       
+  inputs:
+    script: 'sqlcmd -S localhost -d master -U sa -P P@ssword1$ -Q "SELECT @@version;"'
+#   script: 'sqlcmd -S localhost -d master -U sa -P Password123 -Q "SELECT @@version;"'
+# --------------------------------------------------------------------------------------------------------
+
+# --------------------------------------------------------- 
+# BUILD PIPELINE ASSETS
+
 - task: NuGetCommand@2
   displayName: 'restore NuGet packages'
   inputs:
@@ -58,7 +213,65 @@ steps:
     command: 'build'
     arguments: '--configuration $(buildConfiguration)'
     projects: '**/*.sln'
-  
+
+# --------------------------------------------------------- 
+# RUN UNITS AND INTEGRATION TESTS
+
+# Exercise - Perform code coverage testing
+# https://learn.microsoft.com/en-us/training/modules/run-quality-tests-build-pipeline/6-perform-code-coverage
+# Run Unit Tests in an Azure Pipeline
+# https://www.udemy.com/course/azure100/learn/lecture/33318476#overview
+
+# if you want to use test coverage tools in the pipeline you need to let it install the tools
+# that are published in the tools MANIFEST file for your solution
+- task: DotNetCoreCLI@2
+  displayName: 'Install .NET tools from local manifest'
+  inputs:
+    command: custom
+    custom: tool
+    arguments: 'restore'
+
+- task: DotNetCoreCLI@2
+  displayName: 'Run unit tests - $(buildConfiguration)'
+  inputs:
+    command: 'test'
+    # ------------------------------------------------------------------------
+    # This is the minimum that must be done to run the test on the pipeline
+    # arguments: '--no-build --configuration $(buildConfiguration)'
+    # ------------------------------------------------------------------------
+    # If you want to run the test and also the test coverage with the tools
+    # then you must provide the right /p: values such as to produce the 
+    # test results file of the desired format **coverage.cobertura.xml**, etc.
+    arguments: '--no-build --configuration $(buildConfiguration) /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura /p:CoverletOutput=$(Build.SourcesDirectory)/TestResults/Coverage/'
+    publishTestResults: true
+    # ------------------------------------------------------------------------
+    # the pattern here is important.
+    #projects: '**/*.Test.csproj'
+    #..
+    projects: '**/*.*Test.csproj'
+    # ------------------------------------------------------------------------
+
+# after the test run the coverage.cobertura.xml can be used by the RaptorGenerator tool
+# to produce the HtmlInline_AzurePipelines that will be understood and used by the 
+# Azure Pipeline reporting and displayed to the Test tab after the run
+- task: DotNetCoreCLI@2
+  displayName: 'Create code coverage report'
+  inputs:
+    command: custom
+    custom: tool
+    arguments: 'run reportgenerator -reports:$(Build.SourcesDirectory)/**/coverage.cobertura.xml -targetdir:$(Build.SourcesDirectory)/CodeCoverage -reporttypes:HtmlInline_AzurePipelines'
+
+# You have to tell Azure Pipelines that you would like the test coverage results 
+# in HtmlInline_AzurePipelines to be published to the Test tab at the end of the 
+# pipeline run
+- task: PublishCodeCoverageResults@1
+  displayName: 'Publish code coverage report'
+  inputs:
+    codeCoverageTool: 'cobertura'
+    summaryFileLocation: '$(Build.SourcesDirectory)/**/coverage.cobertura.xml'
+
+# ---------------------------------------------------------
+# PUBLISH PIPELINE ASSETS 
 
 - task: DotNetCoreCLI@2
   displayName: 'dotnet publish $(buildConfiguration)'
@@ -112,5 +325,3 @@ steps:
     #targetPath: '$(Pipeline.Workspace)/s/WebApp-01/bin/Release/net6.0/publish.zip'
     artifact: 'webapp01'
     publishLocation: 'pipeline'
-  
-

@@ -5,7 +5,23 @@ VisualStudioVersion = 17.4.33213.308
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{151D2E53-A2C4-4D7D-83FE-D05416EBD58E}") = "ArmTemplates", "ArmTemplates\ArmTemplates.deployproj", "{4351E641-FF27-4650-86B3-47C5AF660569}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApp-01", "WebApp-01\WebApp-01.csproj", "{72C13D9E-0AB6-4705-AF83-60EF6959534B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebApp-01", "WebApp-01\WebApp-01.csproj", "{72C13D9E-0AB6-4705-AF83-60EF6959534B}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BusinessLogic", "BusinessLogic\BusinessLogic.csproj", "{19E583F2-8985-4D2C-BA68-113F255659C4}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BusinessLogic.Test", "BusinessLogic.Test\BusinessLogic.Test.csproj", "{54E77996-808C-4859-B90B-5F5CFA4914C9}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BusinessLogic.IntegrationTest", "BusinessLogic.IntegrationTest\BusinessLogic.IntegrationTest.csproj", "{D71D3F3F-6ECB-4CB1-907B-1893EEA1AA1C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{AFF271D3-DAE7-40CF-809C-8523A3E417FF}"
+	ProjectSection(SolutionItems) = preProject
+		.gitignore = .gitignore
+		azure-pipelines.yml = azure-pipelines.yml
+		LICENSE = LICENSE
+		README.md = README.md
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "Common\Common.csproj", "{89C9102C-6388-4F42-88C8-CEFAA7A80253}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +37,22 @@ Global
 		{72C13D9E-0AB6-4705-AF83-60EF6959534B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{72C13D9E-0AB6-4705-AF83-60EF6959534B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{72C13D9E-0AB6-4705-AF83-60EF6959534B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{19E583F2-8985-4D2C-BA68-113F255659C4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{19E583F2-8985-4D2C-BA68-113F255659C4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{19E583F2-8985-4D2C-BA68-113F255659C4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{19E583F2-8985-4D2C-BA68-113F255659C4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{54E77996-808C-4859-B90B-5F5CFA4914C9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{54E77996-808C-4859-B90B-5F5CFA4914C9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{54E77996-808C-4859-B90B-5F5CFA4914C9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{54E77996-808C-4859-B90B-5F5CFA4914C9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D71D3F3F-6ECB-4CB1-907B-1893EEA1AA1C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D71D3F3F-6ECB-4CB1-907B-1893EEA1AA1C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D71D3F3F-6ECB-4CB1-907B-1893EEA1AA1C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D71D3F3F-6ECB-4CB1-907B-1893EEA1AA1C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{89C9102C-6388-4F42-88C8-CEFAA7A80253}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{89C9102C-6388-4F42-88C8-CEFAA7A80253}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{89C9102C-6388-4F42-88C8-CEFAA7A80253}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{89C9102C-6388-4F42-88C8-CEFAA7A80253}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
