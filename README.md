@@ -149,6 +149,40 @@ Passed!  - Failed:     0, Passed:     1, Skipped:     0, Total:     1, Duration:
 
 ---
 
+### Run Unit Tests without Integration Tests
+
+In first instance it is easier 
+
+### Run Integration Tests
+
+There are several options to run integration tests against a database in a pipeline and in general
+the choice depends on the pipeline and the database used. In the following following the assumption 
+will be that MS SQL Server is the database server of choice and the DevOp pipelines are either
+Azure DevOps or GitHub Actions.
+
+One option that is applicable to both Azure DevOps Pipelines and GitHub Actions is based on the usage
+of [Service containers](https://learn.microsoft.com/en-us/azure/devops/pipelines/process/service-containers?view=azure-devops&tabs=yaml)  .
+In particular the Service Container based on the Docker Image [Microsoft SQL Server - Ubuntu based images](https://hub.docker.com/_/microsoft-mssql-server)  .
+
+With this setup the pipeline spins up a container within a Job and the test logic together with appropriate
+configuration constructs a connection string to the MS SQL Server that runs inside the docker container
+on the same pipeline.
+
+The following are references to what is required to put in place this setup.
+
+- [Service containers](https://learn.microsoft.com/en-us/azure/devops/pipelines/process/service-containers?view=azure-devops&tabs=yaml)  
+- [Microsoft SQL Server - Ubuntu based images](https://hub.docker.com/_/microsoft-mssql-server)  
+- [Integration Testing with SQL Database](https://app.pluralsight.com/course-player?clipId=31e0c3a1-6211-48d8-9552-5be87fb56e43)  
+- [Service Container For Integration Testing](https://app.pluralsight.com/course-player?clipId=102ad897-c4ce-436a-8679-e5ba255aa081)   
+
+The following are references to some troubleshooting resources related to this setup.
+
+- [How do I get MSSQL service container working in Azure DevOps pipeline?](https://stackoverflow.com/questions/63538477/how-do-i-get-mssql-service-container-working-in-azure-devops-pipeline) 
+- [Need examples using service container of sql server](https://developercommunity.visualstudio.com/t/working-examples-using-service-container-of-sql-se/1159426)  
+- [Cannot connect to docker in Azure Pipelines](https://techcommunity.microsoft.com/t5/azure-devops/cannot-connect-to-docker-in-azure-pipelines/m-p/3511673)  
+
+---
+
 
 
 

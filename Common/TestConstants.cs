@@ -4,6 +4,8 @@
 	{
 		// Azdo = Azure DevOps
 
+		public const string ConfigFileName = @"appsettings.test.json";
+
 		// Integration Tests
 		public const string EnvVarNameAzdoTestDbConnectionStringOverride = @"AZDO_TEST_DB_CONNECTION_STRING_OVERRIDE";
 		public const string EnvVarNameAzdoTestDbIntegratedSecurity = @"AZDO_TEST_DB_INTEGRATED_SECURITY";

@@ -36,7 +36,7 @@ namespace BusinessLogic.IntegrationTest
 		public static IConfiguration InitConfiguration()
 		{
 			var config = new ConfigurationBuilder()
-			   .AddJsonFile("appsettings.test.json")
+			   .AddJsonFile(TestConstants.ConfigFileName)
                .AddEnvironmentVariables()
                .Build();
 			return config;
