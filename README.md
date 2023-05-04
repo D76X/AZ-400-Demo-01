@@ -80,7 +80,7 @@ tested and tried through time and confortable with the current **GitFlow Workflo
 
 ---
 
-# [Unit Tests, Intergation Tests and Test Coverage]
+## [Unit Tests, Intergation Tests and Test Coverage]
 
 ### References
 
@@ -183,9 +183,109 @@ The following are references to some troubleshooting resources related to this s
 
 ---
 
+FEATURE-C
+
+---
+
+### Use a deployment job
+
+[Deployment jobs](https://learn.microsoft.com/en-us/azure/devops/pipelines/process/deployment-jobs?view=azure-devops&source=docs)  
+[Create and target an environment](https://learn.microsoft.com/en-us/azure/devops/pipelines/process/environments?view=azure-devops)  
+
+that is build a pipeline all in YAML that performs the BUILD and the RELEASE..
 
 
+---
 
+### Use Deployment Environments
+
+An environment is a collection of resources that you can target with deployments from a pipeline.
+Typical examples of environment names are Dev, Test, QA, Staging, and Production.
+
+[Azure DevOps Environments EXPLAINED](https://www.youtube.com/watch?v=gN4j65w7wIM)
+
+ - Traceability of commits and Work Items [WIs]
+ - Deployment History down to the single resource
+ - Deeper Diagnostics
+ - Approvals
+ - Checks
+ - When a pipeline targets an Environment you do not have to specify the service connections
+   used by your pipeline in the pipeline itself because wih Service Connections pipelines 
+   automatically conusmes the Service Connections defined in their Environments
+
+#### Notes on Deployment Environments
+
+Deployment Environments seems to be a feature of Azure DevOps applicable only to Deployment Jobs
+that is Deployments declared as part of a YAML pipeline and therefore not applicable to the 
+Classic Release Pipelines via the UI provided on the Azure DevOps Portal.
+
+[Azure DevOps: How to make use Environments in Pipelines using classic editor?](https://stackoverflow.com/questions/64099402/azure-devops-how-to-make-use-environments-in-pipelines-using-classic-editor)  
+[Deployment Groups vs Environments](https://developercommunity.visualstudio.com/t/deployment-groups-vs-environments/901600)  
+
+---
+
+
+Use Deployment Groups?
+Deploy a VM?
+
+
+1-add a SQL Server + Database for the WebApp-01
+
+2-
+build a pipeline that Azure SQL Table cration task or similar to create a table and insert data 
+into the table
+
+3-
+Use Container Jobs for some of the build steps!
+
+
+5-
+Demonstrate the use of teh Azure App Service Settings Task in the Release Pipeline
+
+This perhaps on a new Repo?
+
+You want to build some services that can be deployed as containers on 
+Azure Container Instances
+Azure Kubernetes Services AKS
+
+so that the WebApp-10 can use them..
+
+Image-1
+2-add a containerized .Net Core app with a Dockerfile in its folder use Linux LTS as base image
+3-add build pipeline to build this Docker image and uploda to Azure Container Registry
+4-build the Docker image on Azure on a Linux based VM Agent?
+
+Image-2
+5-build the Docker image on Azure on Agent that has Docker on it?
+
+
+---
+
+## Managing Databases with DevOps
+
+[Entity Framework Best Practices - Should EFCore Be Your Data Access of Choice?](https://www.youtube.com/watch?v=qkJ9keBmQWo)  
+[Is it possible to use Entity Framework and a Database project together?](https://stackoverflow.com/questions/58299246/is-it-possible-to-use-entity-framework-and-a-database-project-together)  
+[Code-first Entity Framework 2 with Legacy Databases](https://app.pluralsight.com/library/courses/code-first-entity-framework-legacy-databases/table-of-contents)  
+[Generate Entity Framework Core classes from a SQL Server database project - .dacpac file](https://erikej.github.io/efcore/sqlserver/2020/04/13/generate-efcore-classes-from-a-sql-server-database-project.html)  
+
+[SQL Data Tools In C# - Database Creation, Management, and Deployment in Visual Studio](https://www.youtube.com/watch?v=ijDcHGxyqE4)  
+[CI/CD for SQL Databases (both SSDT and EF)- A TimCo Retail Manager Video](https://www.youtube.com/watch?v=TuHf0Ty80jA)  
+
+https://www.reddit.com/r/dotnet/comments/udaqu5/is_entity_framework_and_code_first_antithetical/ 
+
+[Simple C# Data Access with Dapper and SQL - Minimal API Project Part 1](https://www.youtube.com/watch?v=dwMFg6uxQ0I)
+[Simple C# Data Access with Dapper and SQL - Minimal API Project Part 2](https://www.youtube.com/watch?v=5tYSO5mAjXs)
+
+
+[EditorConfig file doesn't work in Visual Studio 2022? Here is a workaround.](https://www.youtube.com/watch?v=5f1rbw5lOsg)  
+
+---
+
+Connection strings
+
+Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=BusinessDb;Integrated Security=True;Persist Security Info=False;Pooling=False;Multiple Active Result Sets=False;Connect Timeout=60;Encrypt=False;Trust Server Certificate=False
+
+---
 
 
 
