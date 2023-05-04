@@ -49,7 +49,8 @@ resources:
       #Developer Edition is the default if no MSSQL_PID environment variable is supplied
 
 pool:
-  vmImage: ubuntu-latest
+  vmImage: windows-latest
+  #vmImage: ubuntu-latest
 
 # Service containers  
 # https://learn.microsoft.com/en-us/azure/devops/pipelines/process/service-containers?view=azure-devops&tabs=yaml
