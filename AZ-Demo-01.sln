@@ -28,6 +28,8 @@ Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "BusinessDb", "BusinessDb\Bu
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataAccess", "DataAccess\DataAccess.csproj", "{880D232B-5039-4835-8F88-E71A24915AB6}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BusienessDbLib", "BusienessDbLib\BusienessDbLib.csproj", "{EC38AD89-18D9-481E-82BD-313E8E757318}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -68,6 +70,10 @@ Global
 		{880D232B-5039-4835-8F88-E71A24915AB6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{880D232B-5039-4835-8F88-E71A24915AB6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{880D232B-5039-4835-8F88-E71A24915AB6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EC38AD89-18D9-481E-82BD-313E8E757318}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EC38AD89-18D9-481E-82BD-313E8E757318}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EC38AD89-18D9-481E-82BD-313E8E757318}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EC38AD89-18D9-481E-82BD-313E8E757318}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
