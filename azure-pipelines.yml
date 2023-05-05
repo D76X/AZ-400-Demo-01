@@ -49,8 +49,8 @@ resources:
       #Developer Edition is the default if no MSSQL_PID environment variable is supplied
 
 pool:
-  vmImage: windows-latest
-  #vmImage: ubuntu-latest
+  #vmImage: windows-latest
+  vmImage: ubuntu-latest
 
 # Service containers  
 # https://learn.microsoft.com/en-us/azure/devops/pipelines/process/service-containers?view=azure-devops&tabs=yaml
@@ -67,7 +67,7 @@ variables:
   # enable this to print debug info to the Azure DevOps Pipelines console
   # system.debug: true   
   # ----------------------------------------------------
-  buildConfiguration: 'Release'
+  buildConfiguration: 'CustomRelease'
   # ----------------------------------------------------
   # For a pipeline in Azure DevOps Pipelines 
   # Integration Testing with MSSQL Service Container
