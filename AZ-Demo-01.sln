@@ -74,7 +74,6 @@ Global
 		{89C9102C-6388-4F42-88C8-CEFAA7A80253}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{89C9102C-6388-4F42-88C8-CEFAA7A80253}.Release|Any CPU.Build.0 = Release|Any CPU
 		{F174ED86-ED1B-48D3-AC6D-1EBD5B5D81B0}.CustomRelease|Any CPU.ActiveCfg = CustomRelease|Any CPU
-		{F174ED86-ED1B-48D3-AC6D-1EBD5B5D81B0}.CustomRelease|Any CPU.Build.0 = CustomRelease|Any CPU
 		{F174ED86-ED1B-48D3-AC6D-1EBD5B5D81B0}.CustomRelease|Any CPU.Deploy.0 = CustomRelease|Any CPU
 		{F174ED86-ED1B-48D3-AC6D-1EBD5B5D81B0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{F174ED86-ED1B-48D3-AC6D-1EBD5B5D81B0}.Debug|Any CPU.Build.0 = Debug|Any CPU
