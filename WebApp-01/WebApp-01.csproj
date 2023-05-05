@@ -5,6 +5,7 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <RootNamespace>WebApp_01</RootNamespace>
+    <Configurations>Debug;Release;CustomRelease</Configurations>
   </PropertyGroup>
 
   <ItemGroup>
