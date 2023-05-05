@@ -303,7 +303,7 @@ steps:
 - task: CopyFiles@2  
   displayName: 'copy files azuredeploy*.json'
   inputs:
-    sourceFolder: '$(Build.Repository.LocalPath)/ArmTemplates/bin/Release/'
+    sourceFolder: '$(Build.Repository.LocalPath)/ArmTemplates/bin/$(buildConfiguration)/'
     contents: 'azuredeploy*.json'
     targetFolder: '$(Pipeline.Workspace)/temparmtemplates/'
 
