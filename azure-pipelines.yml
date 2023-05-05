@@ -201,15 +201,24 @@ steps:
 # --------------------------------------------------------- 
 # BUILD PIPELINE ASSETS
 
-- task: NuGetCommand@2
-  displayName: 'restore NuGet packages'
+#- task: NuGetCommand@2
+#  displayName: 'restore NuGet packages'
+#  inputs:
+#    command: 'restore'
+#    configuration: '$(buildConfiguration)'
+#    restoreSolution: '**/*.sln'
+#    #command: custom    
+#    #arguments: 'restore --configuration $(buildConfiguration)' #Required when command = custom. Command and arguments.     
+#    feedsToUse: 'select'
+
+- task: DotNetCoreCLI@2
+  displayName: 'Restore Projects'
   inputs:
     command: 'restore'
-    configuration: '$(buildConfiguration)'
-    restoreSolution: '**/*.sln'
-    #command: custom    
-    #arguments: 'restore --configuration $(buildConfiguration)' #Required when command = custom. Command and arguments.     
+    projects: '**/*.csproj'
+    #projects: '**/*DB*/*.csproj'
     feedsToUse: 'select'
+    #vstsFeed: 'db-feed'
 
 - task: DotNetCoreCLI@2
   displayName: 'dotnet build $(buildConfiguration)'
