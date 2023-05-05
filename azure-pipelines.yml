@@ -207,7 +207,7 @@ steps:
     #command: 'restore'
     command: custom
     restoreSolution: '**/*.sln'
-    arguments: '--configuration $(buildConfiguration)' #Required when command = custom. Command and arguments. 
+    arguments: 'dotnet restore --configuration $(buildConfiguration)' #Required when command = custom. Command and arguments. 
     feedsToUse: 'select'
 
 - task: DotNetCoreCLI@2
