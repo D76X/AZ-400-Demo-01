@@ -279,13 +279,38 @@ https://www.reddit.com/r/dotnet/comments/udaqu5/is_entity_framework_and_code_fir
 
 [EditorConfig file doesn't work in Visual Studio 2022? Here is a workaround.](https://www.youtube.com/watch?v=5f1rbw5lOsg)  
 
+### Database Projects on Azure DevOps
+
+What we want to do here is to manage the database schema changes by means of .DATPACS and Visual Studio SQL Projects.
+We want to do this because Visual Studio SQL Projects are very convenient as they provide lots of tooling including refactoring 
+cababilities, intellisense and also integrate with SSDS which makes it much easier and safer to perform and maintain schema chages
+to DBs by producing deployable artifacts such as .DATPACS files.
+
+However, this comes together with the problem that the same solution must then be build by an Azure Pipelien and perhaps also
+on an agent that might notn be a Windows based agent. In this cases while .csproj files can still be used with .Net Core as this is 
+cross platform the same is not the case with .sqlproj assets that can only be built on Windows Agents.
+
+However, there are ways to leave the .sqlproj projects in the solution and still produce the .DATPACS that are required to aplly 
+schema migrations to the target databases.
+
+#### The Problem with NuGetCommand@2 with solutions containing .sqlproj
+
+The most helpful resources to solve these problem are the following.
+
+[Build sqlproj on Azure DevOps](https://stackoverflow.com/questions/53473804/build-sqlproj-on-azure-devops) 
+[Building a SQL Server project on a CI/CD pipeline](https://stackoverflow.com/questions/3980909/microsoft-webapplication-targets-was-not-found-on-the-build-server-whats-your/61292024#61292024)
+
+These are the references to the MSBuild SDK GitHub project that makes this possible.
+
+[MSBuild.Sdk.SqlProj](https://github.com/rr-wfm/MSBuild.Sdk.SqlProj)  
+[Use MSBuild.Sdk.SqlProj to work with dacpacs cross-platform](https://dotnetflix.com/player/104)  
+ 
+This another question to which the same answer is given as a way of confirming that it can be done.
+
+[Build .sqlproj on Linux](https://learn.microsoft.com/en-us/answers/questions/729421/build-sqlproj-on-linux)  
+
+This clarifies important differences between the pipeline tasks NuGetCommand@2 and DotNetCoreCLI@2
+
+[DotNetCoreCLI restore vs NuGetCommand restore](https://stackoverflow.com/questions/66377643/dotnetcorecli-restore-vs-nugetcommand-restore)  
+
 ---
-
-Connection strings
-
-Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=BusinessDb;Integrated Security=True;Persist Security Info=False;Pooling=False;Multiple Active Result Sets=False;Connect Timeout=60;Encrypt=False;Trust Server Certificate=False
-
----
-
-
-

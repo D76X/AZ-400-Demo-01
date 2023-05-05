@@ -201,16 +201,43 @@ steps:
 # --------------------------------------------------------- 
 # BUILD PIPELINE ASSETS
 
+# ----------------------------------------------------------------------------------------------------------------
+# NuGetCommand@2
+# https://learn.microsoft.com/en-us/azure/devops/pipelines/tasks/reference/nuget-command-v2?view=azure-pipelines
+
+# NuGetCommand@2 is what one would normally use to restore NuGet packages in an Azure Pipeline.
+# However, this Visual Studio solution contais a SQL Project and these are not compatible on a pipeline run on a 
+# Linux Agent and can be target of any 'dotnet' command. It is possible to provide the solution (.sln) with a 
+# Build Configuration created via the Configuration Manager that does not build the .sqlproj and this is honour
+# even by the Azure DevOp Pipelines when the 'dotnet build --configuration $(buildConfiguration)' is run by the 
+# Azure CLI. However NuGetCommand@2 cannot do that, unfortunately. There is no way to pass the 
+# '--configuration $(buildConfiguration)' bit to dotnet restore.
+# --------------
+# NuGetCommand@2 has indeed a configuration paramter but does not do what we need.
+#configuration: '$(BuildConfiguration)' Alias: configurationToPack. Optional. Use when command = pack. Configuration to package. Default: $(BuildConfiguration).
+# --------------
+
 #- task: NuGetCommand@2
 #  displayName: 'restore NuGet packages'
 #  inputs:
 #    command: 'restore'
-#    configuration: '$(buildConfiguration)'
+#    configuration: '$(buildConfiguration)' #this does not work
 #    restoreSolution: '**/*.sln'
+#    --------------------------------------------------------------------------------------------------------------
+#    This would also fail!   
 #    #command: custom    
 #    #arguments: 'restore --configuration $(buildConfiguration)' #Required when command = custom. Command and arguments.     
+#    --------------------------------------------------------------------------------------------------------------
 #    feedsToUse: 'select'
 
+# ----------------------------------------------------------------------------------------------------------------
+
+# This was takne from this reference
+# https://stackoverflow.com/questions/53473804/build-sqlproj-on-azure-devops
+# Here the NuGetCommand@2 is replaced by the 'dotnet restore' on all the .csproj which makes it possible to ignore 
+# the .sqlproj in the Nuget Package Restore step which seems impossible to do with NuGetCommand@2.
+
+# Replacement for NuGetCommand@2
 - task: DotNetCoreCLI@2
   displayName: 'Restore Projects'
   inputs:
@@ -220,6 +247,8 @@ steps:
     feedsToUse: 'select'
     #vstsFeed: 'db-feed'
 
+# ----------------------------------------------------------------------------------------------------------------
+
 - task: DotNetCoreCLI@2
   displayName: 'dotnet build $(buildConfiguration)'
   inputs:
@@ -227,7 +256,8 @@ steps:
     arguments: '--configuration $(buildConfiguration)'
     projects: '**/*.sln'
 
-# --------------------------------------------------------- 
+# ----------------------------------------------------------------------------------------------------------------
+
 # RUN UNITS AND INTEGRATION TESTS
 
 # Exercise - Perform code coverage testing
