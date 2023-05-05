@@ -206,6 +206,7 @@ steps:
   inputs:
     command: 'restore'
     restoreSolution: '**/*.sln'
+    arguments: '--configuration $(buildConfiguration)'
     feedsToUse: 'select'
 
 - task: DotNetCoreCLI@2
