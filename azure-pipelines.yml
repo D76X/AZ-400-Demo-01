@@ -204,10 +204,11 @@ steps:
 - task: NuGetCommand@2
   displayName: 'restore NuGet packages'
   inputs:
-    #command: 'restore'
-    command: custom
+    command: 'restore'
+    configuration: '$(buildConfiguration)'
     restoreSolution: '**/*.sln'
-    arguments: 'restore --configuration $(buildConfiguration)' #Required when command = custom. Command and arguments. 
+    #command: custom    
+    #arguments: 'restore --configuration $(buildConfiguration)' #Required when command = custom. Command and arguments.     
     feedsToUse: 'select'
 
 - task: DotNetCoreCLI@2
