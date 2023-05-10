@@ -281,19 +281,21 @@ https://www.reddit.com/r/dotnet/comments/udaqu5/is_entity_framework_and_code_fir
 
 ### Database Projects on Azure DevOps
 
-What we want to do here is to manage the database schema changes by means of .DATPACS and Visual Studio SQL Projects.
+What we want to do here is to manage the database schema changes by means of .DATPAC files and Visual Studio SQL Projects.
 We want to do this because Visual Studio SQL Projects are very convenient as they provide lots of tooling including refactoring 
 cababilities, intellisense and also integrate with SSDS which makes it much easier and safer to perform and maintain schema chages
 to DBs by producing deployable artifacts such as .DATPACS files.
 
-However, this comes together with the problem that the same solution must then be build by an Azure Pipelien and perhaps also
-on an agent that might notn be a Windows based agent. In this cases while .csproj files can still be used with .Net Core as this is 
-cross platform the same is not the case with .sqlproj assets that can only be built on Windows Agents.
+However, this comes together with the problem that the same solution must then be build by an Azure Pipeline and perhaps also
+on an agent that might not be a Windows based agent. In this cases while .csproj files can still be used with .Net Core as this is 
+cross platform the same is not the case with .sqlproj that can only be built on Windows Agents.
 
-However, there are ways to leave the .sqlproj projects in the solution and still produce the .DATPACS that are required to aplly 
+However, there are ways to leave the .sqlproj projects in the solution and still produce the .DATPACS that are required to apply 
 schema migrations to the target databases.
 
-#### The Problem with NuGetCommand@2 with solutions containing .sqlproj
+### The Problem with NuGetCommand@2 with solutions containing .sqlproj
+
+#### Resources used to tackle this problem
 
 The most helpful resources to solve these problem are the following.
 
@@ -312,5 +314,77 @@ This another question to which the same answer is given as a way of confirming t
 This clarifies important differences between the pipeline tasks NuGetCommand@2 and DotNetCoreCLI@2
 
 [DotNetCoreCLI restore vs NuGetCommand restore](https://stackoverflow.com/questions/66377643/dotnetcorecli-restore-vs-nugetcommand-restore)  
+
+#### Summary of the implemented solution
+
+-1 
+A `BusinessDb.sqlproj` project was added to the solution to manage and maintain the schema of the DB.
+This project can be used to manage the databse development on the local machine. For example the 
+publish profilefile `BusinessDb.local.publish.xml` is used to do the deployments to the local instance
+every time there is a schema change. This mechanism **employs DACPAC behind the scenes**.
+
+-2 
+A `BusienessDbLib.csproj` was added to the solution as explained by the reference [MSBuild.Sdk.SqlProj](https://github.com/rr-wfm/MSBuild.Sdk.SqlProj)  
+This project can build DACPAC files from the scripts of the `BusinessDb.sqlproj` project by menas of the 
+`MSBuild SDK`. Technically speaking this is a so called **SDK Project** as it makes use of a specific 
+SDK. The reason why `BusienessDbLib.csproj` is added is that an Azure Pipeline based on a Linux Agent
+would not be able to build the projec `BusinessDb.sqlproj` and produce the .DACPAC files required by 
+a later step of the release pipeline to perform the database deployment. This is due to the fact that 
+`.sqlproj` **only owrks on Windows and within Visual Studio**.
+
+-3
+We want to be able to run the **Azure DevOps pipeline on a Linux Agent** as most modern projects are 
+based on `.Net` as opposed to `.Net Framework`. In these cases is possible to use the **cross platform** 
+`dotnet` tool to perform the build of all the projects of a solution as `dotnet` si not only capable of
+building `*.csproj` based projects but also undderstands a collection of projects by menas of a `.sln`
+file **without the need for Visual Studio**. Therefore, in these cases neither a Windows OS nor an instance
+of Visual Studio are required on the agent which can be then a Linuz Agent.
+
+-4
+One problem though is that in the `AZ-Demo-01.sln` we want to keep both projects 	
+	- `BusinessDb.sqlproj` 
+	- `BusienessDbLib.csproj` 
+
+This has the **advantage** that on the local development machine it is possible to iterate on `BusinessDb.sqlproj`
+in Visual Studio while `BusienessDbLib.csproj` is used on Azure DevOps Pipelines to build the DACPAC files.
+However, with this setup in source control **there arises a problem on the Azure DevOps Pipeline** when the
+pipeline task **[NuGetCommand@2](https://learn.microsoft.com/en-us/azure/devops/pipelines/tasks/reference/nuget-command-v2?view=azure-pipelines&source=docs)**  
+is used to **restore the NuGet packages** before the solution is build. This task will attempt to perform a 
+restore also on the `BusinessDb.sqlproj` project beacsue it is part of the `AZ-Demo-01.sln` but it fails
+as this project is niot compatible with a Linux Agent and can only be build and restored by Visual Studio.
+
+There are different ways ot tackle this porblems for example it could be thought to manage two solutions.
+One references the `BusinessDb.sqlproj` while the other does not so that may be used on Azure DevOps pipelines
+on Linux. 
+
+However, there is a better way based on replacing the pipeline resotre step based on **[NuGetCommand@2]**
+with one that does the same thing by means of the **Azure .Net Core CLI** which can be used on Linux.
+The snipet from the pipeline below should make this clear.
+
+```
+#- task: NuGetCommand@2
+#  displayName: 'restore NuGet packages'
+#  inputs:
+#    command: 'restore'
+#    configuration: '$(buildConfiguration)' #this does not work
+#    restoreSolution: '**/*.sln'
+#    --------------------------------------------------------------------------------------------------------------
+#    This would also fail!   
+#    #command: custom    
+#    #arguments: 'restore --configuration $(buildConfiguration)' #Required when command = custom. Command and arguments.     
+#    --------------------------------------------------------------------------------------------------------------
+#    feedsToUse: 'select'
+```
+```
+- task: DotNetCoreCLI@2
+  displayName: 'Restore Projects'
+  inputs:
+    command: 'restore'
+    projects: '**/*.csproj'    
+    feedsToUse: 'select' 
+```
+
+
+
 
 ---
