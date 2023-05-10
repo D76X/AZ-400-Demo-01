@@ -1,11 +1,15 @@
-<Project Sdk="MSBuild.Sdk.SqlProj/2.5.0">
+﻿<Project Sdk="MSBuild.Sdk.SqlProj/2.5.0">
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <SqlServerVersion>Sql140</SqlServerVersion>
     <Configurations>Debug;Release;CustomRelease</Configurations>
     <!-- For additional properties that can be set here, please refer to https://github.com/rr-wfm/MSBuild.Sdk.SqlProj#model-properties -->
   </PropertyGroup>
-
+  <ItemGroup>
+    <Content Include="..\BusinessDb\Tables\*.sql" />
+    <Content Include="..\BusinessDb\StoredProcedures\*.sql" />
+    <!-- link in the new .csproj to the .sql scripts in your existing database project -->
+  </ItemGroup> 
   <PropertyGroup>
     <!-- Refer to https://github.com/rr-wfm/MSBuild.Sdk.SqlProj#publishing-support for supported publishing options -->
   </PropertyGroup>
