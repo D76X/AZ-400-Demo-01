@@ -455,7 +455,7 @@ The are some **code first** tools such as **EF Core Code First** that are used t
 deployed to the target database even within the contest of an Azure DevOp Pipeline.
 
 #### DECLARATIVE APPROACHES
-The are some **desire database state tools** such as **Visual Studio SQL Projects** which can be used to manage the lifecycle 
+The are some **desired database state tools** such as **Visual Studio SQL Projects** which can be used to manage the lifecycle 
 of databases and produce deployable assets that may also be used within an Azure DevOp Pipeline.
 
 The **Declarative Approaches** provide **several advantages** over the **Imperative Approaches** on many levels.
@@ -468,6 +468,15 @@ The following two references go in detail on why this approach is far better tha
 
 [Simple C# Data Access with Dapper and SQL - Minimal API Project Part 1](https://www.youtube.com/watch?v=dwMFg6uxQ0I)
 [Simple C# Data Access with Dapper and SQL - Minimal API Project Part 2](https://www.youtube.com/watch?v=5tYSO5mAjXs)
+
+There are also reasons why [Migration-based approach](https://devblogs.microsoft.com/azure-sql/devops-for-azure-sql/?WT.mc_id=dataexposed-c9-niner#migration-based-approach)  
+may be preferred to the **declarative approach**. For example, in cases when an ORM is already in used and scheme changes
+are driven via scripted migrations over which the develope and the DB admin desire to have some degree of control.
+With a **declarative approach** often there is a tool such as **SSDS** that produces **artifacts such as DAVPAC**
+and there may be less opportunity to control this kind of output when compared to SQL scripts that may also, perhaps, 
+be edited by hand should the case be.
+
+
 
 
 ---
