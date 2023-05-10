@@ -263,21 +263,32 @@ Image-2
 
 ## Managing Databases with DevOps
 
+
+### For Projects in which EF is used or similar ORM tools
+
 [Entity Framework Best Practices - Should EFCore Be Your Data Access of Choice?](https://www.youtube.com/watch?v=qkJ9keBmQWo)  
 [Is it possible to use Entity Framework and a Database project together?](https://stackoverflow.com/questions/58299246/is-it-possible-to-use-entity-framework-and-a-database-project-together)  
 [Code-first Entity Framework 2 with Legacy Databases](https://app.pluralsight.com/library/courses/code-first-entity-framework-legacy-databases/table-of-contents)  
 [Generate Entity Framework Core classes from a SQL Server database project - .dacpac file](https://erikej.github.io/efcore/sqlserver/2020/04/13/generate-efcore-classes-from-a-sql-server-database-project.html)  
 
+### Projects in which Dapper or any thin ORM is used intead of a heavy-duty ORM such as EF
+
 [SQL Data Tools In C# - Database Creation, Management, and Deployment in Visual Studio](https://www.youtube.com/watch?v=ijDcHGxyqE4)  
-[CI/CD for SQL Databases (both SSDT and EF)- A TimCo Retail Manager Video](https://www.youtube.com/watch?v=TuHf0Ty80jA)  
-
-https://www.reddit.com/r/dotnet/comments/udaqu5/is_entity_framework_and_code_first_antithetical/ 
-
 [Simple C# Data Access with Dapper and SQL - Minimal API Project Part 1](https://www.youtube.com/watch?v=dwMFg6uxQ0I)
 [Simple C# Data Access with Dapper and SQL - Minimal API Project Part 2](https://www.youtube.com/watch?v=5tYSO5mAjXs)
 
+### Example of how to use SQL DB Projects within Visual Studio and on Azure DevOps on Windows Agent and with Visual Studio build tasks
 
+[CI/CD for SQL Databases (both SSDT and EF)- A TimCo Retail Manager Video](https://www.youtube.com/watch?v=TuHf0Ty80jA)  
+
+### Some resources realted to the SQL Database Project and EF debate
+
+[Is Entity Framework and Code First antithetical to SQL Server Database Project?](https://www.reddit.com/r/dotnet/comments/udaqu5/is_entity_framework_and_code_first_antithetical/)  
+
+### Other refernces
 [EditorConfig file doesn't work in Visual Studio 2022? Here is a workaround.](https://www.youtube.com/watch?v=5f1rbw5lOsg)  
+
+---
 
 ### Database Projects on Azure DevOps
 
@@ -359,7 +370,7 @@ on Linux.
 
 However, there is a better way based on replacing the pipeline resotre step based on **[NuGetCommand@2]**
 with one that does the same thing by means of the **Azure .Net Core CLI** which can be used on Linux.
-The snipet from the pipeline below should make this clear.
+The snipet from the pipeline below should make this clear. 
 
 ```
 #- task: NuGetCommand@2
@@ -384,7 +395,79 @@ The snipet from the pipeline below should make this clear.
     feedsToUse: 'select' 
 ```
 
+There are two important thing to notice with this.  The first is that with **DotNetCoreCLI@2 + command: 'restore'**
+it is is not possible to make a resotre on the `.sln` file as with **NuGetCommand@2**. However, this is not even what 
+we would like to do as the `AZ-Demo-01.sln` references the `BusinessDb.sqlproj` which we want to **exclude** from
+the restore step. By resoring with `projects: '**/*.csproj' ` this is easily and automatically achieved.
 
+
+-5
+On the Azure DevOps Pipeline the `BusienessDbLib.csproj` is capable to build and produce the **.dappac** files
+as it is demontrated by the exerpted output below.
+
+```
+Writing model to /home/vsts/work/1/s/BusienessDbLib/obj/CustomRelease/netstandard2.0/BusienessDbLib.dacpac
+BusienessDbLib -> /home/vsts/work/1/s/BusienessDbLib/bin/CustomRelease/netstandard2.0/BusienessDbLib.dacpac  
+```
+
+This is obtained by following the instructions in the references which are repeatede here for convenience.
+
+[Build sqlproj on Azure DevOps](https://stackoverflow.com/questions/53473804/build-sqlproj-on-azure-devops) 
+[Building a SQL Server project on a CI/CD pipeline](https://stackoverflow.com/questions/3980909/microsoft-webapplication-targets-was-not-found-on-the-build-server-whats-your/61292024#61292024)
+[MSBuild.Sdk.SqlProj](https://github.com/rr-wfm/MSBuild.Sdk.SqlProj)  
+[Use MSBuild.Sdk.SqlProj to work with dacpacs cross-platform](https://dotnetflix.com/player/104)  
+ 
+
+```
+<Project Sdk="MSBuild.Sdk.SqlProj/2.5.0">
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <SqlServerVersion>Sql140</SqlServerVersion>
+    <Configurations>Debug;Release;CustomRelease</Configurations>
+    <!-- For additional properties that can be set here, please refer to https://github.com/rr-wfm/MSBuild.Sdk.SqlProj#model-properties -->
+  </PropertyGroup>
+  <ItemGroup>
+    <Content Include="..\BusinessDb\Tables\*.sql" />
+    <Content Include="..\BusinessDb\StoredProcedures\*.sql" />
+    <!-- link in the new .csproj to the .sql scripts in your existing database project -->
+  </ItemGroup> 
+  <PropertyGroup>
+    <!-- Refer to https://github.com/rr-wfm/MSBuild.Sdk.SqlProj#publishing-support for supported publishing options -->
+  </PropertyGroup>
+</Project>
+```
+
+---
+
+### Azure DevOps with Databases with DACPAC files
+
+The following references lay the basis for this topic. 
+
+[DevOps for Azure SQL](https://devblogs.microsoft.com/azure-sql/devops-for-azure-sql/?WT.mc_id=dataexposed-c9-niner) 
+[Using Azure Pipelines for Azure SQL Deployments | Data Exposed](https://www.youtube.com/watch?v=G7H6HbzwAfs)  
+[Getting Started with DevOps for Azure SQL | Data Exposed](https://www.youtube.com/watch?v=j7OnxOz7YDY)
+
+In summary, there are basically two ways in which in modern project it may be possible to **manage the lifecycle** of 
+databases that are used otgether woth applications.
+
+#### IMPERATIVE APPROACHES aka [Migration-based approach](https://devblogs.microsoft.com/azure-sql/devops-for-azure-sql/?WT.mc_id=dataexposed-c9-niner#migration-based-approach)
+The are some **code first** tools such as **EF Core Code First** that are used to produce scripts that may eventually be 
+deployed to the target database even within the contest of an Azure DevOp Pipeline.
+
+#### DECLARATIVE APPROACHES
+The are some **desire database state tools** such as **Visual Studio SQL Projects** which can be used to manage the lifecycle 
+of databases and produce deployable assets that may also be used within an Azure DevOp Pipeline.
+
+The **Declarative Approaches** provide **several advantages** over the **Imperative Approaches** on many levels.
+For example **Visual Studio SQL Projects** come with lost of assisting tooling that make it easy to perform changes to the 
+database schema with safety as the project provides built-in intellisense and will not build if the schema is not consistent.
+Moreover, **this approach does not force the use of a heavy-duty ORM such as Entity Framework** which is far better from the 
+point of view of database general design, maintenace, safety and performance.
+
+The following two references go in detail on why this approach is far better than relying on any ORM.
+
+[Simple C# Data Access with Dapper and SQL - Minimal API Project Part 1](https://www.youtube.com/watch?v=dwMFg6uxQ0I)
+[Simple C# Data Access with Dapper and SQL - Minimal API Project Part 2](https://www.youtube.com/watch?v=5tYSO5mAjXs)
 
 
 ---
