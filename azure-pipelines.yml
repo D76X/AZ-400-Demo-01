@@ -195,7 +195,7 @@ steps:
   displayName: Run test query on sqlserver       
   inputs:
     script: 'sqlcmd -S localhost -d master -U sa -P P@ssword1$ -Q "SELECT @@version;"'
-#   script: 'sqlcmd -S localhost -d master -U sa -P Password123 -Q "SELECT @@version;"'
+
 # --------------------------------------------------------------------------------------------------------
 
 # --------------------------------------------------------- 
@@ -232,7 +232,7 @@ steps:
 
 # ----------------------------------------------------------------------------------------------------------------
 
-# This was takne from this reference
+# This was taken from this reference
 # https://stackoverflow.com/questions/53473804/build-sqlproj-on-azure-devops
 # Here the NuGetCommand@2 is replaced by the 'dotnet restore' on all the .csproj which makes it possible to ignore 
 # the .sqlproj in the Nuget Package Restore step which seems impossible to do with NuGetCommand@2.
@@ -242,10 +242,8 @@ steps:
   displayName: 'Restore Projects'
   inputs:
     command: 'restore'
-    projects: '**/*.csproj'
-    #projects: '**/*DB*/*.csproj'
-    feedsToUse: 'select'
-    #vstsFeed: 'db-feed'
+    projects: '**/*.csproj'    
+    feedsToUse: 'select'    
 
 # ----------------------------------------------------------------------------------------------------------------
 
