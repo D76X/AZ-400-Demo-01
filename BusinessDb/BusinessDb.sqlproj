@@ -58,16 +58,16 @@
     <Folder Include="Properties" />
     <Folder Include="Tables" />
     <Folder Include="Publish" />
-    <Folder Include="SoredProcedures" />
+    <Folder Include="StoredProcedures" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="Tables\Address.sql" />
     <Build Include="Tables\Customer.sql" />
-    <Build Include="SoredProcedures\spCustomer_GetAll.sql" />
-    <Build Include="SoredProcedures\spCustomer_Get.sql" />
-    <Build Include="SoredProcedures\spCustomer_Delete.sql" />
-    <Build Include="SoredProcedures\spCustomer_Insert.sql" />
-    <Build Include="SoredProcedures\spCustomer_Update.sql" />
+    <Build Include="StoredProcedures\spCustomer_GetAll.sql" />
+    <Build Include="StoredProcedures\spCustomer_Get.sql" />
+    <Build Include="StoredProcedures\spCustomer_Delete.sql" />
+    <Build Include="StoredProcedures\spCustomer_Insert.sql" />
+    <Build Include="StoredProcedures\spCustomer_Update.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="BusinessDb.refactorlog" />
