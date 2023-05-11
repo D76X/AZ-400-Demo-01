@@ -284,13 +284,122 @@ Image-2
 ### Some resources realted to the SQL Database Project and EF debate
 
 [Is Entity Framework and Code First antithetical to SQL Server Database Project?](https://www.reddit.com/r/dotnet/comments/udaqu5/is_entity_framework_and_code_first_antithetical/)  
+[Sql Server Data Tools & Entity Framework - is there any synergy here?](https://softwareengineering.stackexchange.com/questions/209815/sql-server-data-tools-entity-framework-is-there-any-synergy-here)  
+
 
 ### Other refernces
 [EditorConfig file doesn't work in Visual Studio 2022? Here is a workaround.](https://www.youtube.com/watch?v=5f1rbw5lOsg)  
 
 ---
 
-### Database Projects on Azure DevOps
+### Deploy Databases with ARM Templates in Azure DevOps Release Pipelines
+
+Before we can even think of managing the lifecycle of a database we must have one. 
+
+In some cases, for example in the familiar **Dev, Test, Staging** Environments, there may be already target databases
+to which schema changes are applied by means of the some of the strategies described in the following parts of this 
+document. However, in this cases the target datadase already exists and all that we rae concerned with is in fact
+to perform schema and data changes.
+
+However, there are cases when this may not be practical. For example, for developer working on a **Feature** it makes
+more sense to start afresh from a new database as the possible schema changes that may be part of the feature itself 
+may not be easily and safely applied to the **Dev or Test Environments** without affecting the work of others. 
+
+Such schema changes may be unsafe for a while and therefore it would be much easier for **Feature Branches** to 
+deploy a dedicated database and inject into it some test data when required.
+
+One way to do this is to include a **ARM Template** in the **CD Pipeline for the Feature Branch** so that 
+**each Feature will have its own database and test data**.
+
+
+#### References
+
+The following is a good example of how ARM Templates can be used in Azure DevOps Pipelines.
+
+This is particularly so as it illustrates how ARM templates and corresponding paramaters can be 
+maintanied in source control as JSON and can be parameterized so that the properties of the deployed
+resources can be controlled by variables set in the **RELEASE PIPELINE** or the **CD Stage** of a 
+**YAML pipeline**.
+
+[Using ARM TEMPLATES In AZURE DEVOPS PIPELINE To Automatically CREATE INFRASTRUCTURE As CODE](https://www.youtube.com/watch?v=3IRwtbGlshk) 
+
+The following is a Quickstart example that may be useful to get an idea of what the ARM template may look like.
+[Quickstart: Create a single database in Azure SQL Database using an ARM template](https://learn.microsoft.com/en-us/azure/azure-sql/database/single-database-create-arm-template-quickstart?view=azuresql)
+
+The following is the reference to all the Azure SQL ARM (and Bicep) Templates.
+[Azure Resource Manager templates for Azure SQL Database & SQL Managed Instance](https://learn.microsoft.com/en-us/azure/azure-sql/database/arm-templates-content-guide?view=azuresql&tabs=single-database)  
+
+From the link above some specific examples are more relevant than others in the context of this demo.
+[Single Azure SQL Database with server-level IP firewall rules](https://github.com/Azure/azure-quickstart-templates/tree/master/quickstarts/microsoft.sql/sql-database-transparent-encryption-create)  
+[Azure Web App with SQL Database](https://github.com/Azure/azure-quickstart-templates/tree/master/quickstarts/microsoft.web/web-app-sql-database)  
+
+#### Use an ARM Template to deploy the databse for the WebApp in the CD pipeline
+
+The following references are a good spring point for our ARM tamplate.
+
+[Azure Web App with SQL Database](https://github.com/Azure/azure-quickstart-templates/tree/master/quickstarts/microsoft.web/web-app-sql-database)  
+[Azure Resource Manager templates for App Service](https://learn.microsoft.com/en-gb/azure/app-service/samples-resource-manager-templates)  
+
+For each Feature Branch we need to perform at least the following logical steps.
+
+- Deploy a dedicated recource group (this has already done)
+- Deploy a Azure SQL Server
+- Deploy a Azure SQL Server Database to the Azure SQL Server with a service tier appropriate for work on a Feature branch
+- Deploy the WebApp on condition that the deployment of the databse was successful
+- Provide the WebApp with the connection string to the datase
+
+---
+
+#### How to handle the parameter replacement in the Release Pipeline
+
+[AZ-400-Azure-DevOps-Sandbox](https://newthinkingtechnologies.visualstudio.com/AZ-400-Azure-DevOps-Sandbox)
+
+In this project we use the **Azure DevOpps Classic Release Pipeline** to implement the release part of the pipeline for
+the `AZ-400-Demo-01` build pipeline. This is one of the 2 options to implement the **CD** part of a pipeline, the other
+is to integrate it in the **CD Stage** of the same YAML just after the **Build Stage**.
+
+With this implementation in the **Pipelines Section** select **Releases**. The view displays all the so far performed 
+**Releases with the correspoing Stage** and **Deployments with the correspondig Branch and Release**.
+The definition of the release can be changed by means of a visual editor by clicking on the **Edit** button.
+The editor displays a **Artifacts** section that lists all the **Artifacts** that may be used in the process of release.
+These are static artifacts such as files or binary build artifacts that may originate by a **preceding build pipeline**.
+The **preceding build pipeline** is always defined in **YAML** and mainained within the source control system. In the 
+yaml of the build pipeline there are one or more tasks such as `task: PublishPipelineArtifact@1` that "publish" the 
+assets for the release to be available later for any **release pipeline** that may wish tou use them in their 
+**Artifacts** section.
+
+
+```
+
+- task: PublishPipelineArtifact@1
+  displayName: 'publish artifacts arm templates'
+  inputs:
+    targetPath: '$(Pipeline.Workspace)/temparmtemplates/'
+    artifact: 'armtemplates'
+    publishLocation: 'pipeline'
+
+- task: PublishPipelineArtifact@1
+  displayName: 'publish artifacts webapp-01'
+  inputs:    
+    targetPath: '$(Build.ArtifactStagingDirectory)/WebApp-01.zip'
+    #targetPath: '$(Pipeline.Workspace)/s/WebApp-01/bin/Release/net6.0/publish.zip'
+    artifact: 'webapp01'
+    publishLocation: 'pipeline'
+
+```
+
+Notice that in genearal this **decouples the release pipeline from any build pipeline** and therefore as far as the
+**classical release pipeline editor** goes it makes it easier to **make available to the release pipeline artifacts
+that may originate from multiple build pipelines**. This is not so easy to achieve when instaed the **CD** part of
+a pipeline is integrated as a **CD Stage** right into the same yaml of the build pipeline following the **Build Stage**.
+
+az400demosqladmin
+az_400_DemoSql_Admin_Psw
+
+
+---
+
+### Manging the Database Lifecycle with Projects on Azure DevOps
 
 What we want to do here is to manage the database schema changes by means of .DATPAC files and Visual Studio SQL Projects.
 We want to do this because Visual Studio SQL Projects are very convenient as they provide lots of tooling including refactoring 
@@ -476,7 +585,5 @@ With a **declarative approach** often there is a tool such as **SSDS** that prod
 and there may be less opportunity to control this kind of output when compared to SQL scripts that may also, perhaps, 
 be edited by hand should the case be.
 
-
-
-
 ---
+
