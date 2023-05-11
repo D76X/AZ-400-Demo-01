@@ -348,6 +348,27 @@ For each Feature Branch we need to perform at least the following logical steps.
 - Deploy the WebApp on condition that the deployment of the databse was successful
 - Provide the WebApp with the connection string to the datase
 
+In this specific case these this process is **represented declaratively** by meas of the **ArmTemplate**
+project that is part of the `AZ-Demo-01.sln` solution. This is a `Visual Studio ARMN Template Project` and
+does nothing else than providing some tooling to support the editing of the two files below. Incidentally,
+the tooling provided by `Visual Studio Code` is also very handy and in some respects better or complementary
+to that provided by Visual Studio. The two tools can be used together without problems shoul done wish to.
+
+```
+azuredeploy.json
+azuredeploy.parameters.json
+```
+
+Within the **Feature** branch we edit these tow file in order to integhrate the steps above that we repeat for
+the sake of clarity.
+
+- Deploy a dedicated recource group (this has already done)
+- Deploy a Azure SQL Server
+- Deploy a Azure SQL Server Database to the Azure SQL Server with a service tier appropriate for work on a Feature branch
+- Deploy the WebApp on condition that the deployment of the databse was successful
+- Provide the WebApp with the connection string to the datase
+
+
 ---
 
 #### How to handle the parameter replacement in the Release Pipeline
@@ -392,6 +413,72 @@ Notice that in genearal this **decouples the release pipeline from any build pip
 **classical release pipeline editor** goes it makes it easier to **make available to the release pipeline artifacts
 that may originate from multiple build pipelines**. This is not so easy to achieve when instaed the **CD** part of
 a pipeline is integrated as a **CD Stage** right into the same yaml of the build pipeline following the **Build Stage**.
+
+---
+
+#### Edit the Feature Stage of the Release Pipeline
+
+Now in the **Release Pipeline Edit** mode select the **Feature** stage to begin with as we are going to 
+add a few **pipeline variables** to the release pipeline and alter or even add steps to it in order to 
+account to the fact that that the ARM template has been modified and some parameters have been added to 
+it in order to cater for the addition of the SQL Server and Database.
+
+In the **Variables section** of the **Feature Stage** we see the existing variables.
+
+```
+arm_appBaseName
+arm_appBaseSkuName
+
+rel_rg_name
+rel_rg_name_suffix
+```
+
+A **name convenction** has been used here where **rel_** stands for **release** and **arm_** for **ARM Template**
+depending on the purpose of the variable and where it is used in the steps of the release pipeline. The variables
+**arm_** are used in the **release tasks Replace Tokes in azuredeploy.paramter.json**. This tasks allow to use the
+**stage value** of the **arm_variablename** to be used to replace the **arm_parametername** in the file
+`azuredeploy.paramter.json` that is available as **Artifacts** to the release pipeline and that comes from the 
+corresponding **Feature** branch.
+
+The the **release tasks ARM Template deployment: Resource Group scope** then will perform the deployment via the 
+**ARM (Azurre Resource Manager)** as declared by the two file below.
+
+```
+azuredeploy.json
+azuredeploy.parameters.json
+```
+
+Notice the following
+
+1-
+each variable name may have a different value at each scope that is the value of `rel_rg_name` can be 
+different according to the scopes **Feature, Development, QATest, QARelease, Preproduction** the **Release** scope
+provides the **default values** assigned to each **release variable** these are in fact **overridden** at each
+release scope as required. 
+
+2-
+some of the variables have **Settable at release time=true** checked in the far right side of the variables
+editor. This is beause some of the Powershell Scripts in the steps of the release of the pipeline replace
+their value programmatically. Without this the value of a **release variable** could not be changed at 
+runtime when the release pipeline executes.
+
+The list of variables must be extended at least a **Feature scope** to encompass also values to assign to the added ARM tamplate
+parameters.
+
+```
+arm_sqlServerName
+arm_sqlDbName
+arm_sqlAdminLogin
+arm_sqlAdminPassword
+
+arm_appBaseName
+arm_appBaseSkuName
+
+rel_rg_name
+rel_rg_name_suffix
+```
+
+
 
 az400demosqladmin
 az_400_DemoSql_Admin_Psw
