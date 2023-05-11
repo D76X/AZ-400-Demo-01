@@ -465,6 +465,7 @@ runtime when the release pipeline executes.
 The list of variables must be extended at least a **Feature scope** to encompass also values to assign to the added ARM tamplate
 parameters.
 
+
 ```
 arm_sqlServerName
 arm_sqlDbName
