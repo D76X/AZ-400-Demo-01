@@ -2,11 +2,26 @@
   "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
-      "asp-az-400-demo-1Name": {
-          "value": "#arm_appBaseName#"
-      },
-      "asp-az-400-demo-1SkuName": {
-          "value": "#arm_appBaseSkuName#"
-      }
+    "asp-az-400-demo-1SqlServerName": {
+      "value": "#arm_sqlServerName#"
+    },
+    "asp-az-400-demo-1SqlDBName": {
+      "value": "#arm_sqlDbName#"
+    },
+    //"asp-az-400-demo-1Sqllocation": {
+    //  "value": "" // TODO: Fill in parameter value
+    //},
+    "asp-az-400-demo-1SqlAdminLogin": {
+      "value": "#arm_sqlAdminLogin#"
+    },
+    "asp-az-400-demo-1SlqAdminPassword": {
+      "value": "#arm_sqlAdminPassword#"
+    },
+    "asp-az-400-demo-1Name": {
+      "value": "#arm_appBaseName#"
+    },
+    "asp-az-400-demo-1SkuName": {
+      "value": "#arm_appBaseSkuName#"
+    }
   }
 }
