@@ -61,9 +61,7 @@
       }
     }
   },
-  "variables": {
-    //"wa-az-400-demo-1Name": "[concat('wa-az-400-demo-1', uniqueString(resourceGroup().id))]"},
-    //"wa-az-400-demo-1Name": "[concat(parameters('asp-az-400-demo-1Name'),'-20230210')]"},
+  "variables": {    
     "wa-az-400-demo-1Name": "[parameters('asp-az-400-demo-1Name')]"},
   "resources": [
     {
@@ -103,15 +101,13 @@
     },
     {
       "type": "Microsoft.Sql/servers/firewallRules",
-      "apiVersion": "2021-02-01-preview",
-      //"name": "[format('{0}/{1}', variables('sqlserverName'), 'AllowAllWindowsAzureIps')]",
+      "apiVersion": "2021-02-01-preview",      
       "name": "[format('{0}/{1}', parameters('asp-az-400-demo-1SqlServerName'), 'AllowAllWindowsAzureIps')]",
       "properties": {
         "endIpAddress": "0.0.0.0",
         "startIpAddress": "0.0.0.0"
       },
-      "dependsOn": [
-        //"[resourceId('Microsoft.Sql/servers', variables('sqlserverName'))]"
+      "dependsOn": [        
         "[resourceId('Microsoft.Sql/servers', parameters('asp-az-400-demo-1SqlServerName'))]"
       ]
     },
@@ -138,8 +134,7 @@
       "type": "Microsoft.Web/sites",
       "name": "[variables('wa-az-400-demo-1Name')]",
       "location": "[resourceGroup().location]",
-      "apiVersion": "2020-12-01",
-      //"apiVersion": "2015-08-01",
+      "apiVersion": "2020-12-01",      
       "dependsOn": [
         "[resourceId('Microsoft.Web/serverfarms', parameters('asp-az-400-demo-1Name'))]"
       ],
@@ -155,21 +150,16 @@
     },
     {
       "type": "Microsoft.Web/sites/config",
-      "apiVersion": "2020-12-01",
-      //"name": "[format('{0}/{1}', variables('websiteName'), 'connectionstrings')]",
+      "apiVersion": "2020-12-01",      
       "name": "[format('{0}/{1}', variables('wa-az-400-demo-1Name'), 'connectionstrings')]",
       "properties": {
-        "DefaultConnection": {
-          //"value": "[format('Data Source=tcp:{0},1433;Initial Catalog={1};User Id={2}@{3};Password={4};', reference(resourceId('Microsoft.Sql/servers', variables('sqlserverName'))).fullyQualifiedDomainName, variables('databaseName'), parameters('sqlAdministratorLogin'), reference(resourceId('Microsoft.Sql/servers', variables('sqlserverName'))).fullyQualifiedDomainName, parameters('sqlAdministratorLoginPassword'))]",
+        "DefaultConnection": {          
           "value": "[format('Data Source=tcp:{0},1433;Initial Catalog={1};User Id={2}@{3};Password={4};', reference(resourceId('Microsoft.Sql/servers', parameters('asp-az-400-demo-1SqlServerName'))).fullyQualifiedDomainName, parameters('asp-az-400-demo-1SqlDbName'), parameters('asp-az-400-demo-1SqlAdminLogin'), reference(resourceId('Microsoft.Sql/servers', parameters('asp-az-400-demo-1SqlServerName'))).fullyQualifiedDomainName, parameters('asp-az-400-demo-1SlqAdminPassword'))]",
           "type": "SQLAzure"
         }
       },
-      "dependsOn": [
-        //"[resourceId('Microsoft.Sql/servers', variables('sqlserverName'))]",
-        "[resourceId('Microsoft.Sql/servers', parameters('asp-az-400-demo-1SqlServerName'))]",
-        //"[resourceId('Microsoft.Web/sites', variables('websiteName'))]"
-        //"[resourceId('Microsoft.Web/sites', parameters('asp-az-400-demo-1SqlDbName'))]"
+      "dependsOn": [        
+        "[resourceId('Microsoft.Sql/servers', parameters('asp-az-400-demo-1SqlServerName'))]",        
         "[resourceId('Microsoft.Web/sites', variables('wa-az-400-demo-1Name'))]"
       ]
     }
