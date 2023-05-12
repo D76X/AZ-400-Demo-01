@@ -366,3 +366,17 @@ steps:
     #targetPath: '$(Pipeline.Workspace)/s/WebApp-01/bin/Release/net6.0/publish.zip'
     artifact: 'webapp01'
     publishLocation: 'pipeline'
+
+- task: CopyFiles@2  
+  displayName: 'copy files BusienessDbLib.dacpac and BusienessDbLib.deps.json'
+  inputs:
+    sourceFolder: '$(Build.Repository.LocalPath)/BusienessDbLib/bin/$(buildConfiguration)/netstandard2.0'
+    contents: '**'
+    targetFolder: '$(Pipeline.Workspace)/dacpacs/'
+
+- task: PublishPipelineArtifact@1
+  displayName: 'publish artifacts DACPACs'
+  inputs:
+    targetPath: '$(Pipeline.Workspace)/dacpacs/'
+    artifact: 'dacpacs'
+    publishLocation: 'pipeline'
