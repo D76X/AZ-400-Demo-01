@@ -8,6 +8,8 @@ namespace DataAccess
 {
 	internal class DataAccessConstants
 	{
-		internal const string ConnectionStringNameDefault = "Default";
+		// use DefaultConnection as this is the name of the connection string
+		// used by most ARM templates example in which an App Service is deployed
+		internal const string ConnectionStringNameDefault = "DefaultConnection";
 	}
 }
