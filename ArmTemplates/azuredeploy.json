@@ -169,7 +169,8 @@
         //"[resourceId('Microsoft.Sql/servers', variables('sqlserverName'))]",
         "[resourceId('Microsoft.Sql/servers', parameters('asp-az-400-demo-1SqlServerName'))]",
         //"[resourceId('Microsoft.Web/sites', variables('websiteName'))]"
-        "[resourceId('Microsoft.Web/sites', parameters('asp-az-400-demo-1SqlDbName'))]"
+        //"[resourceId('Microsoft.Web/sites', parameters('asp-az-400-demo-1SqlDbName'))]"
+        "[resourceId('Microsoft.Web/sites', variables('wa-az-400-demo-1Name'))]"
       ]
     }
   ],
