@@ -10,12 +10,12 @@ namespace DataAccess.DbAccess
 		Task<IEnumerable<T>> LoadData<T, U>(
 			string storeProcedure,
 			U parameter,
-			string connectionId = "Default");
+			string connectionId = DataAccessConstants.ConnectionStringNameDefault);
 
 		Task SaveData<T>(
 			string storeProcedure,
 			T parameter,
-			string connectionId = "Default");
+			string connectionId = DataAccessConstants.ConnectionStringNameDefault);
 	}
 
 	/// <summary>
