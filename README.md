@@ -484,6 +484,36 @@ rel_rg_name_suffix
 az400demosqladmin
 az_400_DemoSql_Admin_Psw
 
+---
+
+### Tips on bebugging WebApp-01
+
+
+1-
+If you have problems with the deployed App Services you may get a default 
+error page mi a message such as the none below. In order to diplay more 
+information on this error page you mai follow the advice given by the 
+reference below and just add the App Setting. This can be done also in the 
+template `azuredeploy.json + azuredeploy.parameters.json` itself using the
+ususal technique of **ARM Template Paramter replacement** so that at least 
+for any deployments from the **Feature** stage the value is set to Development
+by default.
+
+`ASPNETCORE_ENVIRONMENT=Deployment`
+
+Refs
+[Error after deploying asp.net core app to azure](https://stackoverflow.com/questions/40696952/error-after-deploying-asp-net-core-app-to-azure)  
+
+```
+Error. An error occurred while processing your request. Development Mode Swapping
+to Development environment will display more detailed information about the error 
+that occurred.
+```
+
+After `ASPNETCORE_ENVIRONMENT=Deployment` is in place the error page displays the stack 
+trace of teh Exception that caused the error which is OK on Dev/Test Environments but 
+maybe be not OK in production, of course.
+
 
 ---
 
@@ -569,6 +599,7 @@ However, there is a better way based on replacing the pipeline resotre step base
 with one that does the same thing by means of the **Azure .Net Core CLI** which can be used on Linux.
 The snipet from the pipeline below should make this clear. 
 
+
 ```
 #- task: NuGetCommand@2
 #  displayName: 'restore NuGet packages'
@@ -599,8 +630,9 @@ the restore step. By resoring with `projects: '**/*.csproj' ` this is easily and
 
 
 -5
-On the Azure DevOps Pipeline the `BusienessDbLib.csproj` is capable to build and produce the **.dappac** files
-as it is demontrated by the exerpted output below.
+-5
+On the Azure DevOps Pipeline the `BusienessDbLib.csproj` is capable of building and producing the **.dappac** 
+files as it is demontrated by the exerpted output below.
 
 ```
 Writing model to /home/vsts/work/1/s/BusienessDbLib/obj/CustomRelease/netstandard2.0/BusienessDbLib.dacpac
@@ -674,4 +706,44 @@ and there may be less opportunity to control this kind of output when compared t
 be edited by hand should the case be.
 
 ---
+
+### Deoplying DACPAC
+
+In this section we discuss how the **DACPACs** of `BusienessDbLib.csproj` may be used in the **release pipeline**
+in order to apply the schema changes to the target database used by **WebApp-01** and that is deplyed to Azure
+by means of teh same **ARM Template** as explained previously.
+
+-5
+On the Azure DevOps Pipeline the `BusienessDbLib.csproj` is capable of building and producing the **.dappac** 
+files as it is demontrated by the exerpted output below.
+
+```
+Writing model to /home/vsts/work/1/s/BusienessDbLib/obj/CustomRelease/netstandard2.0/BusienessDbLib.dacpac
+BusienessDbLib -> /home/vsts/work/1/s/BusienessDbLib/bin/CustomRelease/netstandard2.0/BusienessDbLib.dacpac  
+```
+
+Once the **Build Pipeline** has run successfully it is possible to inspect a summer of the artifacts that 
+have been published to the pipeline through the `PublishPipelineArtifact@1` steps from the **the summary
+of the build ruin**. Select **Job** and the logs should display something like the following.
+
+```
+Pool: Azure Pipelines
+Image: ubuntu-latest
+Agent: Hosted Agent
+Started: Today at 4:23 PM
+Duration: 2m 9s
+
+Job preparation parameters
+4 artifacts produced
+100% tests passed
+```
+
+In this view on the browser the `4 artifacts produced` is a **link** to a page where the published artifacts
+from the build pipeline are diplayed. These will also be available in the **Artifact Section** of any
+**realease pipeline** whether thsi is implemented via a **CD Stage** in the same YAML as the build pipeline 
+or by menas of the **classic editor for release pipelines** as has laready be explained.
+
+
+---
+
 
