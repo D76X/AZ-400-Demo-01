@@ -471,6 +471,7 @@ arm_sqlServerName
 arm_sqlDbName
 arm_sqlAdminLogin
 arm_sqlAdminPassword
+arm_ASPNETCORE_ENVIRONMENT
 
 arm_appBaseName
 arm_appBaseSkuName
