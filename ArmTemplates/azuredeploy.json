@@ -164,7 +164,13 @@
           "value": "[format('Data Source=tcp:{0},1433;Initial Catalog={1};User Id={2}@{3};Password={4};', reference(resourceId('Microsoft.Sql/servers', parameters('asp-az-400-demo-1SqlServerName'))).fullyQualifiedDomainName, parameters('asp-az-400-demo-1SqlDbName'), parameters('asp-az-400-demo-1SqlAdminLogin'), reference(resourceId('Microsoft.Sql/servers', parameters('asp-az-400-demo-1SqlServerName'))).fullyQualifiedDomainName, parameters('asp-az-400-demo-1SlqAdminPassword'))]",
           "type": "SQLAzure"
         },
-        "ASPNETCORE_ENVIRONMENT": "parameters('asp-az-400-demo-1ASPNETCORE_ENVIRONMENT')"
+        "appSettings": [
+          {
+            "ASPNETCORE_ENVIRONMENT": "string",
+            "value": "parameters('asp-az-400-demo-1ASPNETCORE_ENVIRONMENT')"
+          }
+        ]
+        //"ASPNETCORE_ENVIRONMENT": "parameters('asp-az-400-demo-1ASPNETCORE_ENVIRONMENT')"
         //"appSettings": [
         //  {
         //    "name": "ASPNETCORE_ENVIRONMENT",
