@@ -167,7 +167,7 @@
         "appSettings": [
           {
             "ASPNETCORE_ENVIRONMENT": "string",
-            "value": "parameters('asp-az-400-demo-1ASPNETCORE_ENVIRONMENT')"
+            "value": "[parameters('asp-az-400-demo-1ASPNETCORE_ENVIRONMENT')]"
           }
         ]
         //"ASPNETCORE_ENVIRONMENT": "parameters('asp-az-400-demo-1ASPNETCORE_ENVIRONMENT')"
