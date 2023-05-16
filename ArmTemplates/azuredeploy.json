@@ -2,6 +2,13 @@
   "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
+    "asp-az-400-demo-1ASPNETCORE_ENVIRONMENT": {
+      "type": "string",
+      "defaultValue": "Production",
+      "metadata": {
+        "description": "Controls what is displayed on the error page of a WebApp in App Services."
+      }
+    },
     "asp-az-400-demo-1SqlServerName": {
       "type": "string",
       "defaultValue": "[uniqueString('sql', resourceGroup().id)]",
