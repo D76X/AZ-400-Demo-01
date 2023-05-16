@@ -22,6 +22,9 @@
     },
     "asp-az-400-demo-1SkuName": {
       "value": "#arm_appBaseSkuName#"
+    },
+    "asp-az-400-demo-1ASPNETCORE_ENVIRONMENT": {
+      "value": "#arm_ASPNETCORE_ENVIRONMENT#"
     }
   }
 }
