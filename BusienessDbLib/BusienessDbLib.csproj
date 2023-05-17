@@ -1,9 +1,11 @@
 ﻿<Project Sdk="MSBuild.Sdk.SqlProj/2.5.0">
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <SqlServerVersion>Sql140</SqlServerVersion>
-    <Configurations>Debug;Release;CustomRelease</Configurations>
     <!-- For additional properties that can be set here, please refer to https://github.com/rr-wfm/MSBuild.Sdk.SqlProj#model-properties -->
+    <!-- For the supported SQL Server Version https://learn.microsoft.com/en-gb/dotnet/api/microsoft.sqlserver.dac.model.sqlserverversion?view=sql-dacfx-161 -->
+    <!-- <SqlServerVersion>Sql140</SqlServerVersion> -->
+    <SqlServerVersion>SqlAzure</SqlServerVersion>
+    <Configurations>Debug;Release;CustomRelease</Configurations>
   </PropertyGroup>
   <ItemGroup>
     <Content Include="..\BusinessDb\Tables\*.sql" />
