@@ -182,6 +182,27 @@
         "[resourceId('Microsoft.Sql/servers', parameters('asp-az-400-demo-1SqlServerName'))]",
         "[resourceId('Microsoft.Web/sites', variables('wa-az-400-demo-1Name'))]"
       ]
+    },
+    {
+      "type": "Microsoft.Insights/components",
+      "apiVersion": "2020-02-02",
+      "name": "[format('AppInsights{0}', variables('wa-az-400-demo-1Name'))]",
+      //"name": "[format('AppInsights{0}', variables('websiteName'))]",
+      "location": "[resourceGroup().location]",
+      //"location": "[parameters('location')]",
+      "tags": {
+        //"[format('hidden-link:{0}', resourceId('Microsoft.Web/sites', variables('websiteName')))]": "Resource",
+        "[format('hidden-link:{0}', resourceId('Microsoft.Web/sites',variables('wa-az-400-demo-1Name')))]": "Resource",
+        "displayName": "AppInsightsComponent"
+      },
+      "kind": "web",
+      "properties": {
+        "Application_Type": "web"
+      },
+      "dependsOn": [
+        //"[resourceId('Microsoft.Web/sites', variables('websiteName'))]"
+        "[resourceId('Microsoft.Web/sites', variables('wa-az-400-demo-1Name'))]"
+      ]
     }
   ],
   "outputs": {}
